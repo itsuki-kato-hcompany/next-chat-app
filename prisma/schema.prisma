@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// 1. ジェネレータ設定：Prisma Clientを生成
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 2. データソース設定：使用するデータベースを指定
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 3. データモデル定義
+
+model User {
+  id               Int       @id @default(autoincrement())
+  name             String
+  email            String    @unique
+  password         String
+  profileImgPath   String?   @map("profile_img_path")
+  deletedAt        DateTime? @map("deleted_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  // --- Relations ---
+  refreshTokens    RefreshToken[]
+  channels         ChannelUser[]
+  messages         Message[]
+  messageReads     MessageRead[]
+  createdChannels  Channel[]      @relation("CreatedChannels")
+  updatedChannels  Channel[]      @relation("UpdatedChannels")
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiredAt DateTime @map("expired_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // --- Relations ---
+  userId    Int  @map("user_id")
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model Channel {
+  id          Int       @id @default(autoincrement())
+  name        String
+  isArchive   Boolean   @default(false) @map("is_archive")
+  deletedAt   DateTime? @map("deleted_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // --- Relations ---
+  creatorId   Int   @map("create_user_id")
+  creator     User  @relation("CreatedChannels", fields: [creatorId], references: [id])
+  updaterId   Int   @map("update_user_id")
+  updater     User  @relation("UpdatedChannels", fields: [updaterId], references: [id])
+  users       ChannelUser[]
+  messages    Message[]
+
+  @@map("channels")
+}
+
+model ChannelRole {
+  id      String   @id @default(cuid())
+  name    String   @unique
+  sortNo  Int      @map("sort_no")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // --- Relations ---
+  users   ChannelUser[]
+
+  @@map("channel_roles")
+}
+
+// 中間テーブル: UserとChannelの多対多関係 + role
+model ChannelUser {
+  id        Int       @id @default(autoincrement())
+  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  // --- Relations ---
+  userId    Int     @map("user_id")
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channelId Int     @map("channel_id")
+  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  roleId    String  @map("role_id")
+  role      ChannelRole @relation(fields: [roleId], references: [id])
+
+  @@unique([userId, channelId]) // ユーザーは同じチャンネルに複数参加できない
+  @@map("channel_users")
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  message   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // --- Relations ---
+  userId    Int      @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
+  channelId Int      @map("channel_id")
+  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  readBy    MessageRead[]
+
+  @@map("messages")
+}
+
+// 中間テーブル: UserとMessageの多対多関係（既読管理）
+model MessageRead {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // --- Relations ---
+  userId    Int     @map("user_id")
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messageId Int     @map("message_id")
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, messageId]) // 同じメッセージを複数既読にできない
+  @@map("message_reads")
+}
