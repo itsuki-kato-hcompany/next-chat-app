@@ -1,12 +1,28 @@
+## 想定機能（最小限+α）
+- アカウント登録・編集・退会
+- ログイン・ログアウト
+- チャンネル（ルーム）の登録・編集・アーカイブ・削除
+- チャンネルへの参加・退出
+- メッセージの送信
+- メッセージの既読管理
+
 ```mermaid
 erDiagram
   user ||--|{ refresh_token : "ユーザーとリフレッシュトークン"
   user ||--|{ channel_users : ""
   user ||--|{ message : "ユーザーが送信したメッセージ"
-  user ||--|{ read_message : "ユーザーが既読したメッセージ"
+  user ||--|{ message_read : "ユーザーが既読したメッセージ"
   channel ||--|{ channel_users : "チャンネルに参加しているユーザー"
   channel ||--|{ message : "チャンネル内のメッセージ"
-  message ||--|{ read_message : ""
+  message ||--|{ message_read : ""
+
+  channel_role {
+    string id PK
+    string name "ロール名"
+    int sort_no "表示順"
+    timestamp created_at
+    timestamp updated_at
+  }
 
   user {
     int id PK
@@ -32,6 +48,8 @@ erDiagram
     int id PK
     string name "チャンネル名"
     bool is_archive "アーカイブされたかどうか"
+    int create_user_id "作成ユーザーID"
+    int update_user_id "更新ユーザーID"
     timestamp deleted_at "削除日時"
     timestamp created_at
     timestamp updated_at
@@ -40,6 +58,7 @@ erDiagram
   channel_users {
     int id PK
     int user_id FK
+    string role_id FK "チャンネル内での役割"
     int channel_id FK
     timestamp deleted_at "退出日時"
     timestamp created_at
@@ -55,7 +74,7 @@ erDiagram
     timestamp updated_at
   }
 
-  read_message {
+  message_read {
     int id PK
     int user_id FK
     int message_id FK
