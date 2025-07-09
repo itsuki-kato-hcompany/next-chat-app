@@ -10,6 +10,8 @@ RUN apt-get update && \
     locale-gen ja_JP.UTF-8 && \
     localedef -f UTF-8 -i ja_JP ja_JP
 
+RUN npm install -g @nestjs/cli
+
 # 3. アプリケーションディレクトリの作成と権限移譲 (rootユーザーで実行)
 WORKDIR /usr/src/app
 RUN chown -R node:node /usr/src/app
