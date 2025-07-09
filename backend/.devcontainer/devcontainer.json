@@ -1,0 +1,24 @@
+{
+  "name": "backend",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/usr/src/app",
+  "shutdownAction": "none",
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      "extensions": [
+        "prisma.prisma",
+        "esbenp.prettier-vscode",
+        "Postman.postman-for-vscode",
+        "rangav.vscode-thunder-client@2.21.15",
+        "GitHub.copilot",
+        "GitHub.copilot-chat"
+      ],
+      "settings": {
+        "prettier.prettierPath": "./node_modules/prettier"
+      }
+    }
+  },
+  "initializeCommand": "echo 'Hello World!'"
+}
