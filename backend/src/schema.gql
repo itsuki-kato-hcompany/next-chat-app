@@ -18,6 +18,16 @@ type Query {
   sayHello: String!
 }
 
+type Mutation {
+  addMessage(messageInput: CreateMessageInput!): Message!
+}
+
+input CreateMessageInput {
+  message: String!
+  userId: Int
+  channelId: Int
+}
+
 type Subscription {
   messageAdded: Message!
 }
