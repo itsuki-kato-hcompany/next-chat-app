@@ -15,22 +15,22 @@ datasource db {
 // 3. データモデル定義
 
 model User {
-  id               Int       @id @default(autoincrement())
-  name             String
-  email            String    @unique
-  password         String
-  profileImgPath   String?   @map("profile_img_path")
-  deletedAt        DateTime? @map("deleted_at")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt @map("updated_at")
+  id             Int       @id @default(autoincrement())
+  name           String
+  email          String    @unique
+  password       String
+  profileImgPath String?   @map("profile_img_path")
+  deletedAt      DateTime? @map("deleted_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
 
   // --- Relations ---
-  refreshTokens    RefreshToken[]
-  channels         ChannelUser[]
-  messages         Message[]
-  messageReads     MessageRead[]
-  createdChannels  Channel[]      @relation("CreatedChannels")
-  updatedChannels  Channel[]      @relation("UpdatedChannels")
+  refreshTokens   RefreshToken[]
+  channels        ChannelUser[]
+  messages        Message[]
+  messageReads    MessageRead[]
+  createdChannels Channel[]      @relation("CreatedChannels")
+  updatedChannels Channel[]      @relation("UpdatedChannels")
 
   @@map("users")
 }
@@ -43,40 +43,40 @@ model RefreshToken {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // --- Relations ---
-  userId    Int  @map("user_id")
-  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("refresh_tokens")
 }
 
 model Channel {
-  id          Int       @id @default(autoincrement())
-  name        String
-  isArchive   Boolean   @default(false) @map("is_archive")
-  deletedAt   DateTime? @map("deleted_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id        Int       @id @default(autoincrement())
+  name      String
+  isArchive Boolean   @default(false) @map("is_archive")
+  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
 
   // --- Relations ---
-  creatorId   Int   @map("create_user_id")
-  creator     User  @relation("CreatedChannels", fields: [creatorId], references: [id])
-  updaterId   Int   @map("update_user_id")
-  updater     User  @relation("UpdatedChannels", fields: [updaterId], references: [id])
-  users       ChannelUser[]
-  messages    Message[]
+  creatorId Int           @map("create_user_id")
+  creator   User          @relation("CreatedChannels", fields: [creatorId], references: [id])
+  updaterId Int           @map("update_user_id")
+  updater   User          @relation("UpdatedChannels", fields: [updaterId], references: [id])
+  users     ChannelUser[]
+  messages  Message[]
 
   @@map("channels")
 }
 
 model ChannelRole {
-  id      String   @id @default(cuid())
-  name    String   @unique
-  sortNo  Int      @map("sort_no")
+  id        String   @id @default(cuid())
+  name      String   @unique
+  sortNo    Int      @map("sort_no")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // --- Relations ---
-  users   ChannelUser[]
+  users ChannelUser[]
 
   @@map("channel_roles")
 }
@@ -89,11 +89,11 @@ model ChannelUser {
   updatedAt DateTime  @updatedAt @map("updated_at")
 
   // --- Relations ---
-  userId    Int     @map("user_id")
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  channelId Int     @map("channel_id")
-  channel   Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  roleId    String  @map("role_id")
+  userId    Int         @map("user_id")
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channelId Int         @map("channel_id")
+  channel   Channel     @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  roleId    String      @map("role_id")
   role      ChannelRole @relation(fields: [roleId], references: [id])
 
   @@unique([userId, channelId]) // ユーザーは同じチャンネルに複数参加できない
@@ -107,10 +107,12 @@ model Message {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // --- Relations ---
-  userId    Int      @map("user_id")
-  user      User     @relation(fields: [userId], references: [id])
-  channelId Int      @map("channel_id")
-  channel   Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  // リレーション定義追加後にnot nullに変更
+  userId    Int?           @map("user_id")
+  user      User?         @relation(fields: [userId], references: [id])
+  // リレーション定義追加後にnot nullに変更
+  channelId Int?           @map("channel_id")
+  channel   Channel?      @relation(fields: [channelId], references: [id], onDelete: Cascade)
   readBy    MessageRead[]
 
   @@map("messages")
