@@ -47,8 +47,8 @@ type Mutation {
 
 input CreateMessageInput {
   message: String!
-  userId: Int
-  channelId: Int
+  userId: Int!
+  channelId: Int!
 }
 
 type Subscription {

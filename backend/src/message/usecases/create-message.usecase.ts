@@ -15,6 +15,8 @@ export class CreateMessageUseCase {
   ) {}
 
   async execute(input: CreateMessageInput): Promise<Message> {
+    console.log('CreateMessageUseCase input:', input);
+    
     const newMessage = await this.messageDao.createMessage(input);
 
     await this.pubSub.publish(MESSAGE_ADDED_EVENT, {
