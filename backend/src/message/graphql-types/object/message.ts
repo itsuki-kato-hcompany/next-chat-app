@@ -1,4 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql";
+import { User } from "../../../user/graphql-types/object/user";
+import { Channel } from "../../../channel/graphql-types/object/channel";
 
 @ObjectType("Message")
 export class Message {
@@ -14,5 +16,15 @@ export class Message {
   @Field(() => Date)
   updatedAt: Date
 
-  // TODO：リレーションフィールドを追加
+  @Field(() => User, { nullable: true })
+  user?: User | null
+
+  @Field(() => Channel, { nullable: true })
+  channel?: Channel | null
+
+  @Field(() => Number)
+  userId: number
+
+  @Field(() => Number)
+  channelId: number
 }

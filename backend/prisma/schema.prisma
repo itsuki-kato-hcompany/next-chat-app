@@ -108,10 +108,10 @@ model Message {
 
   // --- Relations ---
   // リレーション定義追加後にnot nullに変更
-  userId    Int?           @map("user_id")
+  userId    Int           @map("user_id")
   user      User?         @relation(fields: [userId], references: [id])
   // リレーション定義追加後にnot nullに変更
-  channelId Int?           @map("channel_id")
+  channelId Int           @map("channel_id")
   channel   Channel?      @relation(fields: [channelId], references: [id], onDelete: Cascade)
   readBy    MessageRead[]
 

@@ -1,18 +1,31 @@
-import { Resolver, Mutation, Args, Subscription, } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Subscription, Query } from '@nestjs/graphql';
 import { Inject } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
 import { Message } from './graphql-types/object/message';
 import { CreateMessageInput } from './graphql-types/input/create-message.input';
+import { GetMessagesArgs } from './graphql-types/args/get-messages.args';
 import { PUB_SUB } from 'src/shared/pubsub/pubsub.module';
-import { MessageDao } from './dao/message.dao';
+import { GetMessagesUseCase } from './usecases/get-messages.usecase';
+import { CreateMessageUseCase } from './usecases/create-message.usecase';
 
 const MESSAGE_ADDED_EVENT = 'messageAdded';
 
 @Resolver(() => Message)
 export class MessageResolver {
-  constructor(@Inject(PUB_SUB) private pubSub: PubSub,
-    private readonly messageDao: MessageDao
+  constructor(
+    @Inject(PUB_SUB) private pubSub: PubSub,
+    private readonly getMessagesUseCase: GetMessagesUseCase,
+    private readonly createMessageUseCase: CreateMessageUseCase
   ) { }
+
+  @Query(() => [Message], { name: 'messages' })
+  async getMessages(@Args() args: GetMessagesArgs): Promise<Message[]> {
+    return this.getMessagesUseCase.execute({
+      channelId: args.channelId,
+      limit: args.limit,
+      offset: args.offset
+    });
+  }
 
   @Subscription(() => Message, {
     name: MESSAGE_ADDED_EVENT,
@@ -25,13 +38,6 @@ export class MessageResolver {
   async addMessage(
     @Args('messageInput') messageInput: CreateMessageInput,
   ): Promise<Message> {
-
-    const newMessage = await this.messageDao.createMessage(messageInput);
-
-    await this.pubSub.publish(MESSAGE_ADDED_EVENT, {
-      [MESSAGE_ADDED_EVENT]: newMessage,
-    });
-
-    return newMessage;
+    return this.createMessageUseCase.execute(messageInput);
   }
 }
