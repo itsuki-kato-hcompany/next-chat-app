@@ -1,5 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import { MessageDao } from "../dao/message.dao";
+import { Injectable, Inject } from "@nestjs/common";
+import { IMessageDao } from "../dao/message.dao.interface";
+import { MESSAGE_DAO_TOKEN } from "../dao/message.dao.token";
 import { Message } from "../graphql-types/object/message";
 
 export interface GetMessagesUseCaseInput {
@@ -10,7 +11,7 @@ export interface GetMessagesUseCaseInput {
 
 @Injectable()
 export class GetMessagesUseCase {
-  constructor(private readonly messageDao: MessageDao) {}
+  constructor(@Inject(MESSAGE_DAO_TOKEN) private readonly messageDao: IMessageDao) {}
 
   async execute(input: GetMessagesUseCaseInput): Promise<Message[]> {
     const { channelId, limit = 50, offset = 0 } = input;

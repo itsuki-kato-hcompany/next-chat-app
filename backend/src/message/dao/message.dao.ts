@@ -2,26 +2,19 @@ import { PrismaService } from "src/shared/prisma/prisma.service";
 import { CreateMessageInput } from "../graphql-types/input/create-message.input";
 import { Injectable } from "@nestjs/common";
 import { Message as PrismaMessage } from "@prisma/client";
+import { IMessageDao } from "./message.dao.interface";
 
 @Injectable()
-export class MessageDao {
+export class MessageDao implements IMessageDao {
   constructor(private readonly prismaService: PrismaService) { }
 
   async createMessage(createMessageInput: CreateMessageInput): Promise<PrismaMessage> {
-    console.log('CreateMessageInput received:', createMessageInput);
-    console.log('userId:', createMessageInput.userId, 'type:', typeof createMessageInput.userId);
-    console.log('channelId:', createMessageInput.channelId, 'type:', typeof createMessageInput.channelId);
-    
-    const data = {
-      message: createMessageInput.message,
-      userId: createMessageInput.userId,
-      channelId: createMessageInput.channelId,
-    };
-    
-    console.log('Data being sent to Prisma:', data);
-    
     return this.prismaService.message.create({
-      data,
+      data: {
+        message: createMessageInput.message,
+        userId: createMessageInput.userId,
+        channelId: createMessageInput.channelId,
+      },
     });
   }
 
