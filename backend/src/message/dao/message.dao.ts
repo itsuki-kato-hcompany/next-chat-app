@@ -32,7 +32,7 @@ export class MessageDao implements IMessageDao {
     channelId: number,
     limit: number = 50,
     offset: number = 0
-  ): Promise<(PrismaMessage & { user: any; channel: any })[]> {
+  ): Promise<(PrismaMessage)[]> {
     return this.prismaService.message.findMany({
       where: {
         channelId: channelId,

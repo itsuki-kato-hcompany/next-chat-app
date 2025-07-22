@@ -12,5 +12,5 @@ export interface IMessageDao {
     channelId: number,
     limit?: number,
     offset?: number
-  ): Promise<(PrismaMessage & { user: any; channel: any })[]>;
+  ): Promise<(PrismaMessage)[]>;
 }
