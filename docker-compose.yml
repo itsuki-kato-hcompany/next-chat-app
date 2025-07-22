@@ -1,0 +1,68 @@
+services:
+  # NestJS Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nestjs_app
+    ports:
+      - "3000:3000"
+      - "5555:5555" # Prisma Studio
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      DB_DATABASE: nestjs_db
+    volumes:
+      - ./backend:/usr/src/app
+      - backend_node_modules:/usr/src/app/node_modules
+    networks:
+      - app-network
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nextjs_app
+    ports:
+      - "3001:3001"
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_GRAPHQL_ENDPOINT: http://localhost:3000/graphql
+      NEXT_PUBLIC_WS_ENDPOINT: ws://localhost:3000/graphql
+    volumes:
+      - ./frontend:/usr/src/app
+      - frontend_node_modules:/usr/src/app/node_modules
+    networks:
+      - app-network
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: nestjs_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+# Dockerネットワークの定義
+networks:
+  app-network:
+    driver: bridge
+
+# Dockerボリュームの定義
+volumes:
+  postgres_data:
+  backend_node_modules:
+  frontend_node_modules:
