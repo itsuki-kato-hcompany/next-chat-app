@@ -1,6 +1,6 @@
 {
-  "name": "frontend",
-  "dockerComposeFile": "../docker-compose.yml",
+  "name": "nextjs_app",
+  "dockerComposeFile": "../../docker-compose.yml",
   "service": "frontend",
   "workspaceFolder": "/usr/src/app",
   "shutdownAction": "none",
