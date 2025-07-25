@@ -1,27 +1,51 @@
 import { PrismaService } from "src/shared/prisma/prisma.service";
 import { CreateMessageInput } from "../graphql-types/input/create-message.input";
-import { Message } from "@prisma/client";
 import { Injectable } from "@nestjs/common";
+import { Message as PrismaMessage } from "@prisma/client";
+import { IMessageDao } from "./message.dao.interface";
 
 @Injectable()
-export class MessageDao {
+export class MessageDao implements IMessageDao {
   constructor(private readonly prismaService: PrismaService) { }
 
-  async createMessage(createMessageInput: CreateMessageInput): Promise<Message> {
+  async createMessage(createMessageInput: CreateMessageInput): Promise<PrismaMessage> {
     return this.prismaService.message.create({
       data: {
         message: createMessageInput.message,
+        userId: createMessageInput.userId,
+        channelId: createMessageInput.channelId,
       },
     });
   }
 
-  async findAllMessages(): Promise<Message[]> {
+  async findAllMessages(): Promise<PrismaMessage[]> {
     return this.prismaService.message.findMany();
   }
 
-  async findMessageById(id: number): Promise<Message | null> {
+  async findMessageById(id: number): Promise<PrismaMessage | null> {
     return this.prismaService.message.findUnique({
       where: { id },
+    });
+  }
+
+  async findMessagesByChannel(
+    channelId: number,
+    limit: number = 50,
+    offset: number = 0
+  ): Promise<(PrismaMessage)[]> {
+    return this.prismaService.message.findMany({
+      where: {
+        channelId: channelId,
+      },
+      include: {
+        user: true,
+        channel: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: limit,
+      skip: offset,
     });
   }
 }

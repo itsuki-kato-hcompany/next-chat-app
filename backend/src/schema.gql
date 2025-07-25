@@ -2,9 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Message {
+type User {
   id: Float!
-  message: String!
+  name: String!
+  email: String!
+  profileImgPath: String
+  deletedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -14,8 +17,28 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Channel {
+  id: Float!
+  name: String!
+  isArchive: Boolean!
+  deletedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Message {
+  id: Float!
+  message: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User
+  channel: Channel
+  userId: Float!
+  channelId: Float!
+}
+
 type Query {
-  sayHello: String!
+  messages(limit: Float = 50, offset: Float = 0, channelId: Float!): [Message!]!
 }
 
 type Mutation {
@@ -24,8 +47,8 @@ type Mutation {
 
 input CreateMessageInput {
   message: String!
-  userId: Int
-  channelId: Int
+  userId: Int!
+  channelId: Int!
 }
 
 type Subscription {

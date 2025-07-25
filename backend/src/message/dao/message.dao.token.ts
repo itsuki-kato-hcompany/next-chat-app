@@ -1,0 +1,1 @@
+export const MESSAGE_DAO_TOKEN = Symbol('MESSAGE_DAO_TOKEN');

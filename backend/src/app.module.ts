@@ -4,7 +4,6 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
-import { AppResolver } from './app.resolver';
 import { MessageModule } from './message/message.module';
 import { PrismaModule } from './shared/prisma/prisma.module';
 import { PubSubModule } from './shared/pubsub/pubsub.module';
@@ -25,6 +24,6 @@ import { PubSubModule } from './shared/pubsub/pubsub.module';
     PubSubModule,
     MessageModule,
   ],
-  providers: [AppResolver],
+  providers: [],
 })
 export class AppModule {}
