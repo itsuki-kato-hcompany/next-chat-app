@@ -2,21 +2,14 @@ import { MessageList } from "./message-list";
 import { MessageInput } from "./message-input";
 import { Hash } from "lucide-react";
 
-// モックデータ
-const mockChannels = [
-  { id: 1, name: "雑談" },
-  { id: 2, name: "お知らせ" },
-  { id: 3, name: "開発" },
-  { id: 4, name: "デザイン" },
-  { id: 5, name: "プロジェクト" },
-];
-
 interface ChatAreaProps {
   selectedChannelId: number;
+  channels: any[]; // TODO：バックエンド実装後に型を定義する
 }
 
-export function ChatArea({ selectedChannelId }: ChatAreaProps) {
-  const selectedChannel = mockChannels.find(channel => channel.id === selectedChannelId);
+export function ChatArea({ selectedChannelId, channels }: ChatAreaProps) {
+  // 現在選択されているチャンネルIDを取得
+  const selectedChannel = channels.find(channel => channel.id === selectedChannelId);
 
   if (!selectedChannel) {
     return (

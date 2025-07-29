@@ -15,16 +15,8 @@ export function MessageInput({ channelId }: MessageInputProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
-      console.log(`Sending message to channel ${channelId}:`, message.trim());
-      // ここで実際のメッセージ送信処理を行う
+      // TODO：ここで実際のメッセージ送信処理を行う
       setMessage("");
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
     }
   };
 
@@ -34,13 +26,12 @@ export function MessageInput({ channelId }: MessageInputProps) {
         <Input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyPress}
           placeholder="メッセージを入力..."
           className="flex-1"
           autoComplete="off"
         />
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           size="icon"
           disabled={!message.trim()}
         >

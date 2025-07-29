@@ -2,10 +2,10 @@
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageItem } from "./message-item";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 // モックデータ
-const mockMessages = [
+const messages = [
   {
     id: 1,
     user: { id: 1, name: "田中さん", avatar: undefined },
@@ -49,23 +49,16 @@ interface MessageListProps {
 }
 
 export function MessageList({ channelId }: MessageListProps) {
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const currentUserId = 3; // モックの現在のユーザーID
+  const currentUserId = 3; // 仮の現在のユーザーID
 
-  // 新しいメッセージが追加されたときに最下部にスクロール
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-      if (scrollContainer) {
-        scrollContainer.scrollTop = scrollContainer.scrollHeight;
-      }
-    }
+    // TODO：多分ここでAPIからメッセージを取得して表示する
   }, [channelId]);
 
   return (
-    <ScrollArea className="flex-1 px-4" ref={scrollAreaRef}>
+    <ScrollArea className="flex-1 px-4">
       <div className="space-y-2 py-4">
-        {mockMessages.map((message) => (
+        {messages.map((message) => (
           <MessageItem
             key={message.id}
             message={message}

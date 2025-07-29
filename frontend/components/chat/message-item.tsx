@@ -29,7 +29,7 @@ export function MessageItem({ message, isOwnMessage = false }: MessageItemProps)
           {message.user.name.slice(0, 2).toUpperCase()}
         </AvatarFallback>
       </Avatar>
-      
+
       <div className={cn(
         "max-w-[70%] min-w-0",
         isOwnMessage && "flex flex-col items-end"
@@ -41,7 +41,7 @@ export function MessageItem({ message, isOwnMessage = false }: MessageItemProps)
           <span className="font-medium text-sm">{message.user.name}</span>
           <span className="text-xs text-slate-500">{message.createdAt}</span>
         </div>
-        
+
         <div className={cn(
           "bg-white border rounded-lg p-3 shadow-sm inline-block",
           isOwnMessage && "bg-blue-50 border-blue-200"

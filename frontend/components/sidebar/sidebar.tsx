@@ -6,7 +6,7 @@ import { Hash } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 // モックデータ
-const mockChannels = [
+const channels = [
   { id: 1, name: "雑談", unreadCount: 3 },
   { id: 2, name: "お知らせ", unreadCount: 0 },
   { id: 3, name: "開発", unreadCount: 12 },
@@ -16,23 +16,26 @@ const mockChannels = [
 
 interface SidebarProps {
   selectedChannelId: number;
+  channels: any[]; // TODO：バックエンド実装後に型を定義する
 }
 
-export function Sidebar({ selectedChannelId }: SidebarProps) {
+export function Sidebar({ selectedChannelId, channels }: SidebarProps) {
   const router = useRouter();
 
+  // チャンネル選択時のハンドラー
   const handleChannelSelect = (channelId: number) => {
     router.push(`/channels/${channelId}`);
   };
+
   return (
     <div className="w-64 bg-slate-100 border-r flex flex-col h-full">
       <div className="p-4 border-b">
         <h2 className="font-semibold text-lg">チャンネル</h2>
       </div>
-      
+
       <ScrollArea className="flex-1">
         <div className="p-2 space-y-1">
-          {mockChannels.map((channel) => (
+          {channels.map((channel) => (
             <Button
               key={channel.id}
               variant={selectedChannelId === channel.id ? "secondary" : "ghost"}
