@@ -24,6 +24,8 @@ type Channel {
   deletedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+  creatorId: Float!
+  updaterId: Float!
 }
 
 type Message {
@@ -39,6 +41,8 @@ type Message {
 
 type Query {
   messages(limit: Float = 50, offset: Float = 0, channelId: Float!): [Message!]!
+  channels: [Channel!]!
+  channel(id: Float!): Channel
 }
 
 type Mutation {

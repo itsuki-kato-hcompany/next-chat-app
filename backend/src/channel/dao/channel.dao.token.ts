@@ -1,0 +1,1 @@
+export const CHANNEL_DAO_TOKEN = Symbol('ChannelDao');

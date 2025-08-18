@@ -12,11 +12,17 @@ export class Channel {
   isArchive: boolean
 
   @Field(() => Date, { nullable: true })
-  deletedAt?: Date
+  deletedAt?: Date | null
 
   @Field(() => Date)
   createdAt: Date
 
   @Field(() => Date)
   updatedAt: Date
+
+  @Field(() => Number)
+  creatorId: number
+
+  @Field(() => Number)
+  updaterId: number
 }

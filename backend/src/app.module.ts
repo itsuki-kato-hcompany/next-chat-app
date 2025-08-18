@@ -5,6 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { MessageModule } from './message/message.module';
+import { ChannelModule } from './channel/channel.module';
 import { PrismaModule } from './shared/prisma/prisma.module';
 import { PubSubModule } from './shared/pubsub/pubsub.module';
 
@@ -23,6 +24,7 @@ import { PubSubModule } from './shared/pubsub/pubsub.module';
     PrismaModule,
     PubSubModule,
     MessageModule,
+    ChannelModule,
   ],
   providers: [],
 })

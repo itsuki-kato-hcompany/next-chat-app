@@ -17,8 +17,6 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <UrqlProvider>
-          {/* UrqlProviderでラップ */}
-          {children}
           {/* ヘッダー */}
           <Header />
           {/* TODO：サイドバーlayoutかpageのどっちに配置した方がいいか検討 */}

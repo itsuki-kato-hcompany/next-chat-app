@@ -1,10 +1,8 @@
 import { notFound } from "next/navigation";
-import { Sidebar } from "@/components/sidebar/sidebar";
 import { ChatArea } from "@/components/chat/chat-area";
 import { getClient } from "@/lib/urqlServer";
-
-// TODO：バックエンドの実装ができたら削除
-const channelIds = [1, 2, 3, 4, 5];
+import { GetMessagesDocument, GetChannelDocument } from "../../../src/generated/documents";
+import type { GetMessagesQuery, GetMessagesQueryVariables, GetChannelQuery, GetChannelQueryVariables } from "../../../src/generated/types";
 
 interface ChannelPageProps {
   params: Promise<{
@@ -16,44 +14,49 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
   const { channelId } = await params;
   const channelIdNum = parseInt(channelId, 10);
 
-  const client = getClient();
-
-  // TODO：ここでGraphQLクエリを実行してチャンネルの情報を取得する
-
-  // TODO：チャンネルの一覧取得
-  const channels = [
-    { id: 1, name: "雑談" },
-    { id: 2, name: "お知らせ" },
-    { id: 3, name: "開発" },
-    { id: 4, name: "デザイン" },
-    { id: 5, name: "プロジェクト" },
-  ];
-
-  // messageの取得
-  const messages = await client.query(
-    `
-    query GetMessages($channelId: Float!) {
-      messages(channelId: $channelId) {
-        id
-        message
-      }
-    }
-  `,
-    { channelId: 1 }
-  ).toPromise();
-
-  console.log(messages?.data.messages);
-
-
   // 無効なチャンネルIDの場合は404
-  if (isNaN(channelIdNum) || !channelIds.includes(channelIdNum)) {
+  if (isNaN(channelIdNum)) {
     notFound();
   }
 
+  const client = getClient();
+
+  // メッセージの取得（型安全）
+  const variables: GetMessagesQueryVariables = {
+    channelId: channelIdNum,
+    limit: 50,
+    offset: 0
+  };
+
+  const messagesResult = await client.query<GetMessagesQuery, GetMessagesQueryVariables>(
+    GetMessagesDocument,
+    variables
+  ).toPromise();
+
+  const messages = messagesResult?.data?.messages || [];
+
+  // チャンネル情報を取得
+  const channelResult = await client.query<GetChannelQuery, GetChannelQueryVariables>(
+    GetChannelDocument,
+    { id: channelIdNum }
+  ).toPromise();
+
+  const channel = channelResult?.data?.channel;
+
+  // チャンネルが存在しない場合は404
+  if (!channel) {
+    notFound();
+  }
+
+  // 仮の現在ユーザーID（実際の実装では認証から取得）
+  const currentUserId = 1;
+
   return (
-    <div className="h-screen flex pt-16">
-      <Sidebar selectedChannelId={channelIdNum} channels={channels} />
-      <ChatArea selectedChannelId={channelIdNum} channels={channels} />
-    </div>
+    <ChatArea
+      selectedChannelId={channelIdNum}
+      channelName={channel.name}
+      messages={messages}
+      currentUserId={currentUserId}
+    />
   );
 }

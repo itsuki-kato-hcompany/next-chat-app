@@ -1,0 +1,7 @@
+#import "../fragments/channel.graphql"
+
+query GetChannel($id: Float!) {
+  channel(id: $id) {
+    ...ChannelFragment
+  }
+}

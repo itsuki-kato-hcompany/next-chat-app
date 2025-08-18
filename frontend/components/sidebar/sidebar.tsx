@@ -4,19 +4,11 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Hash } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-// モックデータ
-const channels = [
-  { id: 1, name: "雑談", unreadCount: 3 },
-  { id: 2, name: "お知らせ", unreadCount: 0 },
-  { id: 3, name: "開発", unreadCount: 12 },
-  { id: 4, name: "デザイン", unreadCount: 1 },
-  { id: 5, name: "プロジェクト", unreadCount: 0 },
-];
+import type { Channel } from "../../src/generated/types";
 
 interface SidebarProps {
   selectedChannelId: number;
-  channels: any[]; // TODO：バックエンド実装後に型を定義する
+  channels: Channel[];
 }
 
 export function Sidebar({ selectedChannelId, channels }: SidebarProps) {
@@ -39,16 +31,11 @@ export function Sidebar({ selectedChannelId, channels }: SidebarProps) {
             <Button
               key={channel.id}
               variant={selectedChannelId === channel.id ? "secondary" : "ghost"}
-              className="w-full justify-start text-left"
+              className="w-full justify-start text-left transition-colors duration-200 hover:!bg-slate-200/75"
               onClick={() => handleChannelSelect(channel.id)}
             >
               <Hash className="w-4 h-4 mr-2" />
               <span className="flex-1">{channel.name}</span>
-              {channel.unreadCount > 0 && (
-                <span className="ml-auto bg-blue-500 text-white text-xs rounded-full px-2 py-0.5 min-w-[20px] text-center">
-                  {channel.unreadCount}
-                </span>
-              )}
             </Button>
           ))}
         </div>
