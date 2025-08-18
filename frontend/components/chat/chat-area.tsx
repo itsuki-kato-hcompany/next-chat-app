@@ -28,11 +28,10 @@ export function ChatArea({ selectedChannelId, channelName, messages, currentUser
       {/* メッセージエリア */}
       <div className="flex-1 flex flex-col min-h-0">
         <MessageList
-          channelId={selectedChannelId}
           messages={messages}
           currentUserId={currentUserId}
         />
-        <MessageInput channelId={selectedChannelId} />
+        <MessageInput channelId={selectedChannelId} currentUserId={currentUserId} />
       </div>
     </div>
   );

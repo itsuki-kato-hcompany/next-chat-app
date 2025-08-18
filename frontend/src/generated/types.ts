@@ -110,6 +110,13 @@ export type GetChannelQueryVariables = Exact<{
 
 export type GetChannelQuery = { __typename?: 'Query', channel?: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } | null };
 
+export type GetChannelNameQueryVariables = Exact<{
+  id: Scalars['Float']['input'];
+}>;
+
+
+export type GetChannelNameQuery = { __typename?: 'Query', channel?: { __typename?: 'Channel', id: number, name: string } | null };
+
 export type GetChannelsQueryVariables = Exact<{ [key: string]: never; }>;
 
 

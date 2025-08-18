@@ -113,6 +113,13 @@ export type GetChannelQueryVariables = Exact<{
 
 export type GetChannelQuery = { __typename?: 'Query', channel?: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } | null };
 
+export type GetChannelNameQueryVariables = Exact<{
+  id: Scalars['Float']['input'];
+}>;
+
+
+export type GetChannelNameQuery = { __typename?: 'Query', channel?: { __typename?: 'Channel', id: number, name: string } | null };
+
 export type GetChannelsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -191,6 +198,18 @@ export const GetChannelDocument = gql`
 
 export function useGetChannelQuery(options: Omit<Urql.UseQueryArgs<GetChannelQueryVariables>, 'query'>) {
   return Urql.useQuery<GetChannelQuery, GetChannelQueryVariables>({ query: GetChannelDocument, ...options });
+};
+export const GetChannelNameDocument = gql`
+    query GetChannelName($id: Float!) {
+  channel(id: $id) {
+    id
+    name
+  }
+}
+    `;
+
+export function useGetChannelNameQuery(options: Omit<Urql.UseQueryArgs<GetChannelNameQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetChannelNameQuery, GetChannelNameQueryVariables>({ query: GetChannelNameDocument, ...options });
 };
 export const GetChannelsDocument = gql`
     query GetChannels {

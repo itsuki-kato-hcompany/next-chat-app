@@ -1,21 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { formatMessageTime } from "@/lib/date-utils";
 import type { Message } from "../../src/generated/types";
 
 interface MessageItemProps {
   message: Message;
   isOwnMessage?: boolean;
   currentUserId?: number;
-}
-
-// 日時フォーマット用の関数
-function formatMessageTime(dateTime: any): string {
-  if (!dateTime) return '';
-  const date = new Date(dateTime);
-  return date.toLocaleTimeString('ja-JP', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
 }
 
 export function MessageItem({ message, isOwnMessage = false, currentUserId }: MessageItemProps) {

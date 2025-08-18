@@ -1,6 +1,7 @@
 'use client'; // このコンポーネントがクライアントで実行されることを示す
 
-import { UrqlProvider as Provider, cacheExchange, createClient, fetchExchange, ssrExchange } from '@urql/next';
+import { UrqlProvider as Provider, cacheExchange, createClient, fetchExchange, ssrExchange, subscriptionExchange } from '@urql/next';
+import { createClient as createWSClient } from 'graphql-ws';
 import { useMemo } from 'react';
 
 // UrqlProviderをラップするコンポーネント
@@ -9,11 +10,31 @@ export function UrqlProvider({ children }: { children: React.ReactNode }) {
     // SSR Exchangeを初期化
     const ssr = ssrExchange();
 
+    // WebSocketクライアントを作成（subscriptions用）
+    const wsClient = createWSClient({
+      url: 'ws://localhost:3000/graphql',
+    });
+
     // urqlクライアントを作成
     const client = createClient({
       // ここにGraphQLサーバーのエンドポイントURLを指定
       url: 'http://localhost:3000/graphql',
-      exchanges: [cacheExchange, ssr, fetchExchange],
+      exchanges: [
+        cacheExchange,
+        ssr,
+        fetchExchange,
+        subscriptionExchange({
+          forwardSubscription(request) {
+            const input = { ...request, query: request.query || '' };
+            return {
+              subscribe(sink) {
+                const unsubscribe = wsClient.subscribe(input, sink);
+                return { unsubscribe };
+              },
+            };
+          },
+        }),
+      ],
       suspense: true, // React Suspenseとの連携を有効にする
     });
 

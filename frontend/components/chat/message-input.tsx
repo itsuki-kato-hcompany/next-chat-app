@@ -4,19 +4,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import { useState } from "react";
+import { useSendMessageMutation } from "../../src/generated/hooks";
 
 interface MessageInputProps {
   channelId: number;
+  currentUserId?: number;
 }
 
-export function MessageInput({ channelId }: MessageInputProps) {
+export function MessageInput({ channelId, currentUserId = 1 }: MessageInputProps) {
   const [message, setMessage] = useState("");
+  const [{ fetching }, sendMessage] = useSendMessageMutation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
-      // TODO：ここで実際のメッセージ送信処理を行う
-      setMessage("");
+    if (message.trim() && !fetching) {
+      try {
+        await sendMessage({
+          messageInput: {
+            message: message.trim(),
+            userId: currentUserId,
+            channelId: channelId,
+          },
+        });
+        setMessage("");
+      } catch (error) {
+        console.error("メッセージ送信エラー:", error);
+      }
     }
   };
 
@@ -33,7 +46,7 @@ export function MessageInput({ channelId }: MessageInputProps) {
         <Button
           type="submit"
           size="icon"
-          disabled={!message.trim()}
+          disabled={!message.trim() || fetching}
         >
           <Send className="w-4 h-4" />
         </Button>

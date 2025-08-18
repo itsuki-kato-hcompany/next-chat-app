@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import { ChatArea } from "@/components/chat/chat-area";
+import { ChatContainer } from "@/components/chat/chat-container";
 import { getClient } from "@/lib/urqlServer";
-import { GetMessagesDocument, GetChannelDocument } from "../../../src/generated/documents";
-import type { GetMessagesQuery, GetMessagesQueryVariables, GetChannelQuery, GetChannelQueryVariables } from "../../../src/generated/types";
+import { GetMessagesDocument, GetChannelNameDocument } from "../../../src/generated/documents";
+import type { GetMessagesQuery, GetMessagesQueryVariables, GetChannelNameQuery, GetChannelNameQueryVariables } from "../../../src/generated/types";
 
 interface ChannelPageProps {
   params: Promise<{
@@ -35,9 +35,9 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
 
   const messages = messagesResult?.data?.messages || [];
 
-  // チャンネル情報を取得
-  const channelResult = await client.query<GetChannelQuery, GetChannelQueryVariables>(
-    GetChannelDocument,
+  // チャンネル情報を取得（名前のみ）
+  const channelResult = await client.query<GetChannelNameQuery, GetChannelNameQueryVariables>(
+    GetChannelNameDocument,
     { id: channelIdNum }
   ).toPromise();
 
@@ -52,10 +52,10 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
   const currentUserId = 1;
 
   return (
-    <ChatArea
+    <ChatContainer
       selectedChannelId={channelIdNum}
       channelName={channel.name}
-      messages={messages}
+      initialMessages={messages}
       currentUserId={currentUserId}
     />
   );

@@ -19,7 +19,7 @@ export default async function ChannelsLayout({
 
   const client = getClient();
 
-  // バックエンドからチャンネル一覧を取得
+  // チャンネル一覧を取得
   const channelsResult = await client.query<GetChannelsQuery, GetChannelsQueryVariables>(
     GetChannelsDocument,
     {}
