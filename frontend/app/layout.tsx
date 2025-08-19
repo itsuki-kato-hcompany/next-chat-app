@@ -19,7 +19,6 @@ export default function RootLayout({
         <UrqlProvider>
           {/* ヘッダー */}
           <Header />
-          {/* TODO：サイドバーlayoutかpageのどっちに配置した方がいいか検討 */}
           {children}
         </UrqlProvider>
       </body>

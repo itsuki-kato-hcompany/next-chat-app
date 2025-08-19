@@ -17,11 +17,11 @@ export function MessageInput({ channelId, currentUserId = 1 }: MessageInputProps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() && !fetching) {
+    if (!fetching) {
       try {
         await sendMessage({
           messageInput: {
-            message: message.trim(),
+            message: message,
             userId: currentUserId,
             channelId: channelId,
           },
@@ -46,7 +46,7 @@ export function MessageInput({ channelId, currentUserId = 1 }: MessageInputProps
         <Button
           type="submit"
           size="icon"
-          disabled={!message.trim() || fetching}
+          disabled={!message || fetching}
         >
           <Send className="w-4 h-4" />
         </Button>

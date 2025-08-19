@@ -21,21 +21,19 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
 
   const client = getClient();
 
-  // メッセージの取得（型安全）
-  const variables: GetMessagesQueryVariables = {
-    channelId: channelIdNum,
-    limit: 50,
-    offset: 0
-  };
-
+  // メッセージの取得
   const messagesResult = await client.query<GetMessagesQuery, GetMessagesQueryVariables>(
     GetMessagesDocument,
-    variables
+    {
+      channelId: channelIdNum,
+      limit: 50,
+      offset: 0
+    }
   ).toPromise();
 
   const messages = messagesResult?.data?.messages || [];
 
-  // チャンネル情報を取得（名前のみ）
+  // チャットルーム内にチャンネル名を表示するためにチャンネル情報を取得（名前のみ）
   const channelResult = await client.query<GetChannelNameQuery, GetChannelNameQueryVariables>(
     GetChannelNameDocument,
     { id: channelIdNum }
