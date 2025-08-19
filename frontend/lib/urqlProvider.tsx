@@ -1,4 +1,4 @@
-'use client'; // このコンポーネントがクライアントで実行されることを示す
+'use client';
 
 import { UrqlProvider as Provider, cacheExchange, createClient, fetchExchange, ssrExchange, subscriptionExchange } from '@urql/next';
 import { createClient as createWSClient } from 'graphql-ws';
@@ -17,7 +17,6 @@ export function UrqlProvider({ children }: { children: React.ReactNode }) {
 
     // urqlクライアントを作成
     const client = createClient({
-      // ここにGraphQLサーバーのエンドポイントURLを指定
       url: 'http://localhost:3000/graphql',
       exchanges: [
         cacheExchange,
