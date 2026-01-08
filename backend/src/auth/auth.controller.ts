@@ -52,10 +52,21 @@ export class AuthController {
       path: '/',
     });
 
-    // フロントエンドにリダイレクト（Access Tokenをクエリパラメータで渡す）
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3001');
-    const redirectUrl = `${frontendUrl}/auth/callback?token=${tokens.accessToken}`;
+    // Access TokenをCookieに設定
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 15 * 60 * 1000, // 15分
+      path: '/',
+    });
 
-    return res.redirect(redirectUrl);
+    // フロントエンドにリダイレクト（トークンなし）
+    const frontendUrl = this.configService.get<string>(
+      'FRONTEND_URL',
+      'http://localhost:3001',
+    );
+
+    return res.redirect(`${frontendUrl}/auth/callback`);
   }
 }
