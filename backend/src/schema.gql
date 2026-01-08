@@ -39,13 +39,20 @@ type Message {
   channelId: Float!
 }
 
+type AuthTokens {
+  accessToken: String!
+}
+
 type Query {
+  me: User
   messages(limit: Float = 50, offset: Float = 0, channelId: Float!): [Message!]!
   channels: [Channel!]!
   channel(id: Float!): Channel
 }
 
 type Mutation {
+  refreshToken: AuthTokens!
+  logout: Boolean!
   addMessage(messageInput: CreateMessageInput!): Message!
 }
 

@@ -46,15 +46,11 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
     notFound();
   }
 
-  // 仮の現在ユーザーID（実際の実装では認証から取得）
-  const currentUserId = 1;
-
   return (
     <ChatContainer
       selectedChannelId={channelIdNum}
       channelName={channel.name}
       initialMessages={messages}
-      currentUserId={currentUserId}
     />
   );
 }

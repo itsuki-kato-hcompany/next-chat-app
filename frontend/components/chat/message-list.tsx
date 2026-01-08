@@ -2,14 +2,16 @@
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageItem } from "./message-item";
+import { useAuth } from "@/lib/auth-context";
 import type { Message } from "../../src/generated/types";
 
 interface MessageListProps {
   messages: Message[];
-  currentUserId?: number;
 }
 
-export function MessageList({ messages, currentUserId = 1 }: MessageListProps) {
+export function MessageList({ messages }: MessageListProps) {
+  const { user } = useAuth();
+  const currentUserId = user?.id ?? 0;
   if (!messages || messages.length === 0) {
     return (
       <ScrollArea className="flex-1 px-4">
