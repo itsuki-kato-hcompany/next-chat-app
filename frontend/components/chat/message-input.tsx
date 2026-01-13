@@ -5,13 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import { useState } from "react";
 import { useSendMessageMutation } from "../../src/generated/hooks";
+import { useAuth } from "@/lib/auth-context";
 
 interface MessageInputProps {
   channelId: number;
-  currentUserId?: number;
 }
 
-export function MessageInput({ channelId, currentUserId = 1 }: MessageInputProps) {
+export function MessageInput({ channelId }: MessageInputProps) {
+  const { user } = useAuth();
+  const currentUserId = user?.id ?? 0;
   const [message, setMessage] = useState("");
   const [{ fetching }, sendMessage] = useSendMessageMutation();
 

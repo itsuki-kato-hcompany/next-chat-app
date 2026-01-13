@@ -9,14 +9,12 @@ interface ChatContainerProps {
   selectedChannelId: number;
   channelName: string;
   initialMessages: Message[];
-  currentUserId?: number;
 }
 
 export function ChatContainer({
   selectedChannelId,
   channelName,
   initialMessages,
-  currentUserId = 1
 }: ChatContainerProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
@@ -47,7 +45,6 @@ export function ChatContainer({
       selectedChannelId={selectedChannelId}
       channelName={channelName}
       messages={messages}
-      currentUserId={currentUserId}
     />
   );
 }

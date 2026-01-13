@@ -7,10 +7,9 @@ interface ChatAreaProps {
   selectedChannelId: number;
   channelName: string;
   messages: Message[];
-  currentUserId?: number;
 }
 
-export function ChatArea({ selectedChannelId, channelName, messages, currentUserId }: ChatAreaProps) {
+export function ChatArea({ selectedChannelId, channelName, messages }: ChatAreaProps) {
 
   return (
     <div className="flex-1 flex flex-col bg-white">
@@ -27,11 +26,8 @@ export function ChatArea({ selectedChannelId, channelName, messages, currentUser
 
       {/* メッセージエリア */}
       <div className="flex-1 flex flex-col min-h-0">
-        <MessageList
-          messages={messages}
-          currentUserId={currentUserId}
-        />
-        <MessageInput channelId={selectedChannelId} currentUserId={currentUserId} />
+        <MessageList messages={messages} />
+        <MessageInput channelId={selectedChannelId} />
       </div>
     </div>
   );
