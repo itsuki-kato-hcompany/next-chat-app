@@ -4,34 +4,20 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 
-// Cookieからトークンを取得するヘルパー
-function getCookie(name: string): string | null {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) {
-    return parts.pop()?.split(';').shift() || null;
-  }
-  return null;
-}
-
-// Cookieを削除するヘルパー
-function deleteCookie(name: string) {
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-}
-
 export default function AuthCallbackPage() {
   const router = useRouter();
   const { setAccessToken } = useAuth();
 
   useEffect(() => {
-    const token = getCookie('accessToken');
+    const hash = window.location.hash;
+    const params = new URLSearchParams(hash.substring(1));
+    const token = params.get('token');
 
     if (token) {
       setAccessToken(token);
-      deleteCookie('accessToken'); // Cookieから削除（セキュリティ向上）
+      window.history.replaceState(null, '', window.location.pathname);
       router.push('/channels/1');
     } else {
-      // エラーの場合はログインページにリダイレクト
       router.push('/login');
     }
   }, [setAccessToken, router]);

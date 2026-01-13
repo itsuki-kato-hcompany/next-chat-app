@@ -9,6 +9,9 @@ import {
   ReactNode,
 } from 'react';
 
+/**
+ * ユーザー情報の型定義
+ */
 interface User {
   id: number;
   name: string;
@@ -16,27 +19,42 @@ interface User {
   profileImgPath?: string | null;
 }
 
+/**
+ * 認証コンテキストで提供する値の型定義
+ */
 interface AuthContextType {
-  user: User | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  accessToken: string | null;
-  login: (provider: 'google' | 'github') => void;
-  logout: () => Promise<void>;
-  setAccessToken: (token: string | null) => void;
-  getAccessToken: () => string | null;
+  user: User | null; // ログイン中のユーザー情報
+  isLoading: boolean; // 認証状態の読み込み中フラグ
+  isAuthenticated: boolean; // ログイン済みかどうか
+  accessToken: string | null; // アクセストークン
+  login: (provider: 'google' | 'github') => void; // ログイン処理
+  setAccessToken: (token: string | null) => void; // トークン設定
+  getAccessToken: () => string | null; // トークン取得
 }
 
+/**
+ * 認証コンテキストを作成
+ */
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 const TOKEN_KEY = 'accessToken';
 
+/**
+ * 認証状態を管理し、子コンポーネントに提供するプロバイダー
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
+  // ユーザー情報
   const [user, setUser] = useState<User | null>(null);
+  // アクセストークン
   const [accessToken, setAccessTokenState] = useState<string | null>(null);
+  // 認証状態の読み込み中フラグ
   const [isLoading, setIsLoading] = useState(true);
 
+  /**
+   * アクセストークンを設定し、localStorageにも保存する
+   * tokenがnullの場合はlocalStorageから削除
+   */
   const setAccessToken = useCallback((token: string | null) => {
     setAccessTokenState(token);
     if (token) {
@@ -46,10 +64,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  /**
+   * アクセストークンを取得
+   * メモリ上にない場合はlocalStorageから取得
+   */
   const getAccessToken = useCallback(() => {
     return accessToken || localStorage.getItem(TOKEN_KEY);
   }, [accessToken]);
 
+  /**
+   * アクセストークンを使ってユーザー情報を取得
+   * 成功したらtrue、失敗したらfalseを返す
+   */
   const fetchCurrentUser = useCallback(async (token: string) => {
     try {
       const response = await fetch(`${API_URL}/graphql`, {
@@ -81,11 +107,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return false;
     } catch (error) {
-      console.error('Failed to fetch user:', error);
+      console.error('ユーザー情報の取得に失敗しました:', error);
       return false;
     }
   }, []);
 
+  /**
+   * リフレッシュトークン（Cookie）を使って新しいアクセストークンを取得
+   * 成功したら新しいトークンを返し、失敗したらnullを返す
+   */
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
     try {
       const response = await fetch(`${API_URL}/graphql`, {
@@ -114,36 +144,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return null;
     } catch (error) {
-      console.error('Failed to refresh token:', error);
+      console.error('トークンのリフレッシュに失敗しました:', error);
       return null;
     }
   }, [setAccessToken]);
 
-  // Initialize auth state
+  /**
+   * アプリ起動時に認証状態を初期化
+   */
   useEffect(() => {
     const initAuth = async () => {
       setIsLoading(true);
 
-      // Check for stored token
+      // localStorageからトークンを取得
       const storedToken = localStorage.getItem(TOKEN_KEY);
 
       if (storedToken) {
+        // localStorageにトークンがある場合
         setAccessTokenState(storedToken);
         const success = await fetchCurrentUser(storedToken);
 
         if (!success) {
-          // Token expired, try to refresh
+          // トークンが期限切れの場合、リフレッシュを試みる
           const newToken = await refreshAccessToken();
           if (newToken) {
             await fetchCurrentUser(newToken);
           } else {
-            // Refresh failed, clear auth state
+            // リフレッシュも失敗した場合、認証状態をクリア
             setAccessToken(null);
             setUser(null);
           }
         }
       } else {
-        // No token, try to refresh (in case we have a refresh token cookie)
+        // localStorageにトークンがない場合
+        // Cookieにリフレッシュトークンがあれば復元を試みる
         const newToken = await refreshAccessToken();
         if (newToken) {
           await fetchCurrentUser(newToken);
@@ -156,46 +190,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initAuth();
   }, [fetchCurrentUser, refreshAccessToken, setAccessToken]);
 
+  /**
+   * OAuth認証を開始
+   * バックエンドの認証エンドポイントにリダイレクト
+   */
   const login = useCallback((provider: 'google' | 'github') => {
     window.location.href = `${API_URL}/auth/${provider}`;
   }, []);
 
-  const logout = useCallback(async () => {
-    const token = getAccessToken();
-
-    if (token) {
-      try {
-        await fetch(`${API_URL}/graphql`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            query: `
-              mutation Logout {
-                logout
-              }
-            `,
-          }),
-        });
-      } catch (error) {
-        console.error('Logout error:', error);
-      }
-    }
-
-    setAccessToken(null);
-    setUser(null);
-  }, [getAccessToken, setAccessToken]);
-
+  // コンテキストで提供する値をまとめる
   const value: AuthContextType = {
     user,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user, // userがあればtrue
     accessToken,
     login,
-    logout,
     setAccessToken,
     getAccessToken,
   };
@@ -203,10 +212,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+/**
+ * 認証コンテキストを使用するためのhook
+ * AuthProviderの外で使用するとエラーになる
+ */
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuthはAuthProvider内で使用してください');
   }
   return context;
 }

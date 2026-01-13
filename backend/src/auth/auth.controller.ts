@@ -43,30 +43,23 @@ export class AuthController {
     const profile = req.user as OAuthUserProfile;
     const { tokens } = await this.oauthLoginUseCase.execute(profile);
 
-    // Refresh TokenをHTTP-only Cookieに設定
+    const isProduction = process.env.NODE_ENV === 'production';
+
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/',
     });
 
-    // Access TokenをCookieに設定
-    res.cookie('accessToken', tokens.accessToken, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000, // 15分
-      path: '/',
-    });
-
-    // フロントエンドにリダイレクト（トークンなし）
     const frontendUrl = this.configService.get<string>(
       'FRONTEND_URL',
       'http://localhost:3001',
     );
 
-    return res.redirect(`${frontendUrl}/auth/callback`);
+    return res.redirect(
+      `${frontendUrl}/auth/callback#token=${tokens.accessToken}`,
+    );
   }
 }
