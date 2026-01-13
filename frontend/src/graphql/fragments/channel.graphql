@@ -1,0 +1,9 @@
+fragment ChannelFragment on Channel {
+  id
+  name
+  isArchive
+  createdAt
+  updatedAt
+  creatorId
+  updaterId
+}

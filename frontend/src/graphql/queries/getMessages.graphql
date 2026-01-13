@@ -1,0 +1,7 @@
+#import "../fragments/message.graphql"
+
+query GetMessages($channelId: Float!, $limit: Float = 50, $offset: Float = 0) {
+  messages(channelId: $channelId, limit: $limit, offset: $offset) {
+    ...MessageFragment
+  }
+}

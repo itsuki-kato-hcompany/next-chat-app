@@ -15,6 +15,10 @@ export class MessageDao implements IMessageDao {
         userId: createMessageInput.userId,
         channelId: createMessageInput.channelId,
       },
+      include: {
+        user: true,
+        channel: true,
+      },
     });
   }
 
@@ -42,7 +46,7 @@ export class MessageDao implements IMessageDao {
         channel: true,
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: 'asc',
       },
       take: limit,
       skip: offset,

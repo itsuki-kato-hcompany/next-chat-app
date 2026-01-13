@@ -1,0 +1,17 @@
+#import "./user.graphql"
+#import "./channel.graphql"
+
+fragment MessageFragment on Message {
+  id
+  message
+  userId
+  channelId
+  createdAt
+  updatedAt
+  user {
+    ...UserFragment
+  }
+  channel {
+    ...ChannelFragment
+  }
+}

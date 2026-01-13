@@ -1,0 +1,6 @@
+query GetChannelName($id: Float!) {
+  channel(id: $id) {
+    id
+    name
+  }
+}
