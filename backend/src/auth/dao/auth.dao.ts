@@ -103,10 +103,4 @@ export class AuthDao implements IAuthDao {
       where: { token },
     });
   }
-
-  async deleteUserRefreshTokens(userId: number): Promise<void> {
-    await this.prisma.refreshToken.deleteMany({
-      where: { userId },
-    });
-  }
 }

@@ -34,5 +34,4 @@ export interface IAuthDao {
   createRefreshToken(input: CreateRefreshTokenInput): Promise<RefreshToken>;
   findRefreshToken(token: string): Promise<RefreshToken | null>;
   deleteRefreshToken(token: string): Promise<void>;
-  deleteUserRefreshTokens(userId: number): Promise<void>;
 }

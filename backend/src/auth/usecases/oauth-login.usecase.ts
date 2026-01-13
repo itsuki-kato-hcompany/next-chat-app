@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
 import { randomBytes } from 'crypto';
 import { IAuthDao } from '../dao/auth.dao.interface';
@@ -23,11 +22,9 @@ export class OAuthLoginUseCase {
     @Inject(AUTH_DAO_TOKEN)
     private readonly authDao: IAuthDao,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
   ) {}
 
   async execute(profile: OAuthUserProfile): Promise<OAuthLoginResult> {
-    // 1. OAuthアカウントを検索
     let oauthAccount = await this.authDao.findOAuthAccount(
       profile.provider,
       profile.providerId,
@@ -46,6 +43,7 @@ export class OAuthLoginUseCase {
       });
 
       // ユーザー情報を更新（名前、メール、プロフィール画像）
+      // TODO：メールアドレスを上書きするかどうかは要検討
       const updateData: { name?: string; email?: string; profileImgPath?: string } = {};
 
       if (profile.name && profile.name !== user.name) {
@@ -85,52 +83,21 @@ export class OAuthLoginUseCase {
       });
     }
 
-    // 2. トークンを生成
     const tokens = await this.generateTokens(user);
 
     return { user, tokens };
   }
 
   private async generateTokens(user: User): Promise<AuthTokens> {
-    // Access Token生成（expiresInはJwtModule設定を使用）
     const accessToken = this.jwtService.sign({ sub: user.id, email: user.email });
-
-    // Refresh Token生成
     const refreshToken = randomBytes(64).toString('hex');
-    const refreshTokenExpiresIn = this.configService.get<string>(
-      'REFRESH_TOKEN_EXPIRES_IN',
-      '7d',
-    );
 
-    // Refresh Tokenの有効期限を計算
-    const expiredAt = this.calculateExpiredAt(refreshTokenExpiresIn);
-
-    // Refresh TokenをDBに保存
     await this.authDao.createRefreshToken({
       token: refreshToken,
       userId: user.id,
-      expiredAt,
+      expiredAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
     return { accessToken, refreshToken };
-  }
-
-  private calculateExpiredAt(expiresIn: string): Date {
-    const match = expiresIn.match(/^(\d+)([smhd])$/);
-    if (!match) {
-      return new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // default 7 days
-    }
-
-    const value = parseInt(match[1], 10);
-    const unit = match[2];
-
-    const multipliers: Record<string, number> = {
-      s: 1000,
-      m: 60 * 1000,
-      h: 60 * 60 * 1000,
-      d: 24 * 60 * 60 * 1000,
-    };
-
-    return new Date(Date.now() + value * multipliers[unit]);
   }
 }
