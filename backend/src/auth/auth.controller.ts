@@ -59,6 +59,8 @@ export class AuthController {
     );
 
     return res.redirect(
+      // アクセストークンはクエリパラメータではなくURLフラグメントで渡す
+      // NOTE：HTTPリクエストには含まれないため、サーバーログ等に記録されない
       `${frontendUrl}/auth/callback#token=${tokens.accessToken}`,
     );
   }
