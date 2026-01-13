@@ -34,6 +34,7 @@ interface AuthContextType {
 
 /**
  * 認証コンテキストを作成
+ * TODO：サーバーコンポーネントから認証情報にアクセスする場合は別途実装が必要そう？
  */
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
