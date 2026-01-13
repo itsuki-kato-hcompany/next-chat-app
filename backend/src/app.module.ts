@@ -25,7 +25,8 @@ import { AuthModule } from './auth/auth.module';
         'graphql-ws': true, // WebSocketプロトコルを有効化
         'subscriptions-transport-ws': true,
       },
-      // GraphQL contextにreqとresを渡す（認証で使用）
+      // ResolverでCookieにアクセスするための設定
+      // 参照：https://github.com/nestjs/graphql/issues/119
       context: ({ req, res }) => ({ req, res }),
     }),
     PrismaModule,
