@@ -66,7 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /**
    * アクセストークンを取得
-   * メモリ上にない場合はlocalStorageから取得
    */
   const getAccessToken = useCallback(() => {
     return accessToken || localStorage.getItem(TOKEN_KEY);
@@ -113,7 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   /**
-   * リフレッシュトークン（Cookie）を使って新しいアクセストークンを取得
+   * リフレッシュトークンを使って新しいアクセストークンを取得
    * 成功したら新しいトークンを返し、失敗したらnullを返す
    */
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
@@ -165,7 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const success = await fetchCurrentUser(storedToken);
 
         if (!success) {
-          // トークンが期限切れの場合、リフレッシュを試みる
+          // トークンが期限切れの場合、リフレッシュを試行
           const newToken = await refreshAccessToken();
           if (newToken) {
             await fetchCurrentUser(newToken);
@@ -177,7 +176,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } else {
         // localStorageにトークンがない場合
-        // Cookieにリフレッシュトークンがあれば復元を試みる
+        // Cookieにリフレッシュトークンがあれば復元を試行
         const newToken = await refreshAccessToken();
         if (newToken) {
           await fetchCurrentUser(newToken);
@@ -198,11 +197,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.location.href = `${API_URL}/auth/${provider}`;
   }, []);
 
-  // コンテキストで提供する値をまとめる
   const value: AuthContextType = {
     user,
     isLoading,
-    isAuthenticated: !!user, // userがあればtrue
+    isAuthenticated: !!user, // userがあればログイン済みとする
     accessToken,
     login,
     setAccessToken,
@@ -214,7 +212,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 /**
  * 認証コンテキストを使用するためのhook
- * AuthProviderの外で使用するとエラーになる
+ * NOTE：AuthProvider内で使用する
  */
 export function useAuth() {
   const context = useContext(AuthContext);
