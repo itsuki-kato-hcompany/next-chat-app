@@ -4,11 +4,14 @@ import { User } from '@prisma/client';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { CreateChannelInput } from './graphql-types/input/create-channel.input';
+import { InviteToChannelInput } from './graphql-types/input/invite-to-channel.input';
 import { JoinChannelInput } from './graphql-types/input/join-channel.input';
 import { Channel } from './graphql-types/object/channel';
+import { InviteToChannelResult } from './graphql-types/object/invite-to-channel-result';
 import { CreateChannelUseCase } from './usecases/create-channel.usecase';
 import { GetChannelUseCase } from './usecases/get-channel.usecase';
 import { GetChannelsUseCase } from './usecases/get-channels.usecase';
+import { InviteToChannelUseCase } from './usecases/invite-to-channel.usecase';
 import { JoinChannelUseCase } from './usecases/join-channel.usecase';
 
 @Resolver(() => Channel)
@@ -17,6 +20,7 @@ export class ChannelResolver {
     private readonly createChannelUseCase: CreateChannelUseCase,
     private readonly getChannelUseCase: GetChannelUseCase,
     private readonly getChannelsUseCase: GetChannelsUseCase,
+    private readonly inviteToChannelUseCase: InviteToChannelUseCase,
     private readonly joinChannelUseCase: JoinChannelUseCase,
   ) {}
 
@@ -36,6 +40,14 @@ export class ChannelResolver {
     @CurrentUser() currentUser: User,
   ): Promise<Channel> {
     return this.joinChannelUseCase.execute(input, currentUser);
+  }
+
+  @Mutation(() => InviteToChannelResult)
+  @UseGuards(GqlAuthGuard)
+  async inviteToChannel(
+    @Args('input') input: InviteToChannelInput,
+  ): Promise<InviteToChannelResult> {
+    return this.inviteToChannelUseCase.execute(input);
   }
 
   @Query(() => [Channel], { name: 'channels' })

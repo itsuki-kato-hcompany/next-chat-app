@@ -10,4 +10,8 @@ export interface IChannelDao {
   createChannel(input: CreateChannelInput, userId: number): Promise<Channel>;
 
   joinChannel(input: JoinChannelInput, userId: number): Promise<Channel>;
+
+  findChannelUserIdsByChannelId(channelId: number): Promise<number[]>;
+
+  inviteUsersToChannel(channelId: number, userIds: number[]): Promise<void>;
 }

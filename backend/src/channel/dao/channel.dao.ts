@@ -74,4 +74,22 @@ export class ChannelDao implements IChannelDao {
       where: { id: input.channelId },
     });
   }
+
+  async findChannelUserIdsByChannelId(channelId: number): Promise<number[]> {
+    const channelUsers = await this.prismaService.channelUser.findMany({
+      where: { channelId, deletedAt: null },
+      select: { userId: true },
+    });
+    return channelUsers.map((cu) => cu.userId);
+  }
+
+  async inviteUsersToChannel(channelId: number, userIds: number[]): Promise<void> {
+    await this.prismaService.channelUser.createMany({
+      data: userIds.map((userId) => ({
+        userId,
+        channelId,
+        roleId: ChannelRole.MEMBER,
+      })),
+    });
+  }
 }

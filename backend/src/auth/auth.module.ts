@@ -47,6 +47,6 @@ import { AuthResolver } from './auth.resolver';
     RefreshTokenUseCase,
     AuthResolver,
   ],
-  exports: [GqlAuthGuard],
+  exports: [GqlAuthGuard, AUTH_DAO_TOKEN],
 })
 export class AuthModule {}

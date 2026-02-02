@@ -43,6 +43,13 @@ type AuthTokens {
   accessToken: String!
 }
 
+type InviteToChannelResult {
+  channel: Channel!
+  invitedUserIds: [Int!]!
+  alreadyMemberUserIds: [Int!]!
+  notFoundUserIds: [Int!]!
+}
+
 type Query {
   me: User
 
@@ -58,6 +65,7 @@ type Mutation {
   addMessage(messageInput: CreateMessageInput!): Message!
   createChannel(input: CreateChannelInput!): Channel!
   joinChannel(input: JoinChannelInput!): Channel!
+  inviteToChannel(input: InviteToChannelInput!): InviteToChannelResult!
 }
 
 input CreateMessageInput {
@@ -72,6 +80,11 @@ input CreateChannelInput {
 
 input JoinChannelInput {
   channelId: Int!
+}
+
+input InviteToChannelInput {
+  channelId: Int!
+  userIds: [Int!]!
 }
 
 type Subscription {
