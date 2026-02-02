@@ -12,9 +12,6 @@ export class CreateChannelUseCase {
   ) {}
 
   async execute(input: CreateChannelInput, currentUser: User): Promise<Channel> {
-    return this.channelDao.createChannel({
-      name: input.name,
-      creatorId: currentUser.id,
-    });
+    return this.channelDao.createChannel(input, currentUser.id);
   }
 }

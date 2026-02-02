@@ -5,6 +5,7 @@ import { CHANNEL_DAO_TOKEN } from './dao/channel.dao.token';
 import { CreateChannelUseCase } from './usecases/create-channel.usecase';
 import { GetChannelUseCase } from './usecases/get-channel.usecase';
 import { GetChannelsUseCase } from './usecases/get-channels.usecase';
+import { JoinChannelUseCase } from './usecases/join-channel.usecase';
 import { PrismaModule } from 'src/shared/prisma/prisma.module';
 
 @Module({
@@ -18,6 +19,7 @@ import { PrismaModule } from 'src/shared/prisma/prisma.module';
     CreateChannelUseCase,
     GetChannelUseCase,
     GetChannelsUseCase,
+    JoinChannelUseCase,
   ],
 })
 export class ChannelModule {}

@@ -57,6 +57,7 @@ type Mutation {
   refreshToken: AuthTokens!
   addMessage(messageInput: CreateMessageInput!): Message!
   createChannel(input: CreateChannelInput!): Channel!
+  joinChannel(input: JoinChannelInput!): Channel!
 }
 
 input CreateMessageInput {
@@ -67,6 +68,10 @@ input CreateMessageInput {
 
 input CreateChannelInput {
   name: String!
+}
+
+input JoinChannelInput {
+  channelId: Int!
 }
 
 type Subscription {
