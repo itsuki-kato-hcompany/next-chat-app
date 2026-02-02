@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { ChannelResolver } from './channel.resolver';
 import { ChannelDao } from './dao/channel.dao';
 import { CHANNEL_DAO_TOKEN } from './dao/channel.dao.token';
-import { GetChannelsUseCase } from './usecases/get-channels.usecase';
+import { CreateChannelUseCase } from './usecases/create-channel.usecase';
 import { GetChannelUseCase } from './usecases/get-channel.usecase';
+import { GetChannelsUseCase } from './usecases/get-channels.usecase';
 import { PrismaModule } from 'src/shared/prisma/prisma.module';
 
 @Module({
@@ -14,8 +15,9 @@ import { PrismaModule } from 'src/shared/prisma/prisma.module';
       provide: CHANNEL_DAO_TOKEN,
       useClass: ChannelDao,
     },
-    GetChannelsUseCase,
+    CreateChannelUseCase,
     GetChannelUseCase,
+    GetChannelsUseCase,
   ],
 })
-export class ChannelModule { }
+export class ChannelModule {}
