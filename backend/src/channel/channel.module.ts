@@ -9,6 +9,7 @@ import { GetChannelUseCase } from './usecases/get-channel.usecase';
 import { GetChannelsUseCase } from './usecases/get-channels.usecase';
 import { InviteToChannelUseCase } from './usecases/invite-to-channel.usecase';
 import { JoinChannelUseCase } from './usecases/join-channel.usecase';
+import { ValidateChannelInvitationUseCase } from './usecases/validate-channel-invitation.usecase';
 
 @Module({
   imports: [PrismaModule, AuthModule],
@@ -23,6 +24,7 @@ import { JoinChannelUseCase } from './usecases/join-channel.usecase';
     GetChannelsUseCase,
     InviteToChannelUseCase,
     JoinChannelUseCase,
+    ValidateChannelInvitationUseCase,
   ],
 })
 export class ChannelModule {}
