@@ -45,6 +45,9 @@ type AuthTokens {
 
 type Query {
   me: User
+
+  """開発環境専用: テスト用アクセストークン取得"""
+  getAccessToken(userId: Int!): AuthTokens!
   messages(limit: Float = 50, offset: Float = 0, channelId: Float!): [Message!]!
   channels: [Channel!]!
   channel(id: Float!): Channel
