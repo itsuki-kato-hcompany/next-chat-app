@@ -12,10 +12,10 @@ export class User {
   email: string
 
   @Field(() => String, { nullable: true })
-  profileImgPath?: string
+  profileImgPath: string | null
 
   @Field(() => Date, { nullable: true })
-  deletedAt?: Date
+  deletedAt: Date | null
 
   @Field(() => Date)
   createdAt: Date

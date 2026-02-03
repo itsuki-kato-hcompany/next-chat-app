@@ -24,6 +24,7 @@ export interface CreateRefreshTokenInput {
 export interface IAuthDao {
   findUserByEmail(email: string): Promise<User | null>;
   findUserById(id: number): Promise<User | null>;
+  findUsersByIds(ids: number[]): Promise<User[]>;
   createUser(input: CreateUserInput): Promise<User>;
   updateUser(id: number, data: Partial<CreateUserInput>): Promise<User>;
 
