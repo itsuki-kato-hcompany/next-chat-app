@@ -7,14 +7,14 @@ import { CreateChannelInput } from './graphql-types/input/create-channel.input';
 import { InviteToChannelInput } from './graphql-types/input/invite-to-channel.input';
 import { JoinChannelInput } from './graphql-types/input/join-channel.input';
 import { Channel } from './graphql-types/object/channel';
+import { CheckChannelInvitationResult } from './graphql-types/object/check-channel-invitation-result';
 import { InviteToChannelResult } from './graphql-types/object/invite-to-channel-result';
-import { ValidateChannelInvitationResult } from './graphql-types/object/validate-channel-invitation-result';
+import { CheckChannelInvitationUseCase } from './usecases/check-channel-invitation.usecase';
 import { CreateChannelUseCase } from './usecases/create-channel.usecase';
 import { GetChannelUseCase } from './usecases/get-channel.usecase';
 import { GetChannelsUseCase } from './usecases/get-channels.usecase';
 import { InviteToChannelUseCase } from './usecases/invite-to-channel.usecase';
 import { JoinChannelUseCase } from './usecases/join-channel.usecase';
-import { ValidateChannelInvitationUseCase } from './usecases/validate-channel-invitation.usecase';
 
 @Resolver(() => Channel)
 export class ChannelResolver {
@@ -24,7 +24,7 @@ export class ChannelResolver {
     private readonly getChannelsUseCase: GetChannelsUseCase,
     private readonly inviteToChannelUseCase: InviteToChannelUseCase,
     private readonly joinChannelUseCase: JoinChannelUseCase,
-    private readonly validateChannelInvitationUseCase: ValidateChannelInvitationUseCase,
+    private readonly checkChannelInvitationUseCase: CheckChannelInvitationUseCase,
   ) {}
 
   @Mutation(() => Channel)
@@ -64,12 +64,12 @@ export class ChannelResolver {
     return this.getChannelUseCase.execute(id);
   }
 
-  @Query(() => ValidateChannelInvitationResult)
+  @Query(() => CheckChannelInvitationResult)
   @UseGuards(GqlAuthGuard)
-  async validateChannelInvitation(
+  async checkChannelInvitation(
     @Args('input') input: InviteToChannelInput,
     @CurrentUser() currentUser: User,
-  ): Promise<ValidateChannelInvitationResult> {
-    return this.validateChannelInvitationUseCase.execute(input, currentUser);
+  ): Promise<CheckChannelInvitationResult> {
+    return this.checkChannelInvitationUseCase.execute(input, currentUser);
   }
 }

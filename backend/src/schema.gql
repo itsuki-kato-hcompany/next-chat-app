@@ -43,15 +43,15 @@ type AuthTokens {
   accessToken: String!
 }
 
-type InviteToChannelResult {
-  channel: Channel!
-  invitedUsers: [User!]!
+type CheckChannelInvitationResult {
+  validUsers: [User!]!
   alreadyMemberUsers: [User!]!
   notFoundUserIds: [Int!]!
 }
 
-type ValidateChannelInvitationResult {
-  validUsers: [User!]!
+type InviteToChannelResult {
+  channel: Channel!
+  invitedUsers: [User!]!
   alreadyMemberUsers: [User!]!
   notFoundUserIds: [Int!]!
 }
@@ -64,7 +64,7 @@ type Query {
   messages(limit: Float = 50, offset: Float = 0, channelId: Float!): [Message!]!
   channels: [Channel!]!
   channel(id: Float!): Channel
-  validateChannelInvitation(input: InviteToChannelInput!): ValidateChannelInvitationResult!
+  checkChannelInvitation(input: InviteToChannelInput!): CheckChannelInvitationResult!
 }
 
 input InviteToChannelInput {

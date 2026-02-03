@@ -4,12 +4,13 @@ import { PrismaModule } from 'src/shared/prisma/prisma.module';
 import { ChannelResolver } from './channel.resolver';
 import { ChannelDao } from './dao/channel.dao';
 import { CHANNEL_DAO_TOKEN } from './dao/channel.dao.token';
+import { ChannelInvitationService } from './services/channel-invitation.service';
+import { CheckChannelInvitationUseCase } from './usecases/check-channel-invitation.usecase';
 import { CreateChannelUseCase } from './usecases/create-channel.usecase';
 import { GetChannelUseCase } from './usecases/get-channel.usecase';
 import { GetChannelsUseCase } from './usecases/get-channels.usecase';
 import { InviteToChannelUseCase } from './usecases/invite-to-channel.usecase';
 import { JoinChannelUseCase } from './usecases/join-channel.usecase';
-import { ValidateChannelInvitationUseCase } from './usecases/validate-channel-invitation.usecase';
 
 @Module({
   imports: [PrismaModule, AuthModule],
@@ -19,12 +20,13 @@ import { ValidateChannelInvitationUseCase } from './usecases/validate-channel-in
       provide: CHANNEL_DAO_TOKEN,
       useClass: ChannelDao,
     },
+    ChannelInvitationService,
     CreateChannelUseCase,
     GetChannelUseCase,
     GetChannelsUseCase,
     InviteToChannelUseCase,
     JoinChannelUseCase,
-    ValidateChannelInvitationUseCase,
+    CheckChannelInvitationUseCase,
   ],
 })
 export class ChannelModule {}
