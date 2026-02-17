@@ -14,4 +14,6 @@ export interface IChannelDao {
   findChannelUserIdsByChannelId(channelId: number): Promise<number[]>;
 
   inviteUsersToChannel(channelId: number, userIds: number[]): Promise<void>;
+
+  findChannelsByUserId(userId: number): Promise<Channel[]>;
 }

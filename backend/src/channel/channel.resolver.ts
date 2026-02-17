@@ -13,6 +13,7 @@ import { CheckChannelInvitationUseCase } from './usecases/check-channel-invitati
 import { CreateChannelUseCase } from './usecases/create-channel.usecase';
 import { GetChannelUseCase } from './usecases/get-channel.usecase';
 import { GetChannelsUseCase } from './usecases/get-channels.usecase';
+import { GetMyChannelsUseCase } from './usecases/get-my-channels.usecase';
 import { InviteToChannelUseCase } from './usecases/invite-to-channel.usecase';
 import { JoinChannelUseCase } from './usecases/join-channel.usecase';
 
@@ -25,6 +26,7 @@ export class ChannelResolver {
     private readonly inviteToChannelUseCase: InviteToChannelUseCase,
     private readonly joinChannelUseCase: JoinChannelUseCase,
     private readonly checkChannelInvitationUseCase: CheckChannelInvitationUseCase,
+    private readonly getMyChannelsUseCase: GetMyChannelsUseCase,
   ) {}
 
   @Mutation(() => Channel)
@@ -57,6 +59,14 @@ export class ChannelResolver {
   @Query(() => [Channel], { name: 'channels' })
   async getChannels(): Promise<Channel[]> {
     return this.getChannelsUseCase.execute();
+  }
+
+  @Query(() => [Channel], { name: 'myChannels' })
+  @UseGuards(GqlAuthGuard)
+  async getMyChannels(
+    @CurrentUser() currentUser: User,
+  ): Promise<Channel[]> {
+    return this.getMyChannelsUseCase.execute(currentUser.id);
   }
 
   @Query(() => Channel, { name: 'channel', nullable: true })
