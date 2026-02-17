@@ -43,21 +43,54 @@ type AuthTokens {
   accessToken: String!
 }
 
+type CheckChannelInvitationResult {
+  validUsers: [User!]!
+  alreadyMemberUsers: [User!]!
+  notFoundUserIds: [Int!]!
+}
+
+type InviteToChannelResult {
+  channel: Channel!
+  invitedUsers: [User!]!
+  alreadyMemberUsers: [User!]!
+  notFoundUserIds: [Int!]!
+}
+
 type Query {
   me: User
+
+  """開発環境専用: テスト用アクセストークン取得"""
+  getAccessToken(userId: Int!): AuthTokens!
   messages(limit: Float = 50, offset: Float = 0, channelId: Float!): [Message!]!
   channels: [Channel!]!
   channel(id: Float!): Channel
+  checkChannelInvitation(input: InviteToChannelInput!): CheckChannelInvitationResult!
+}
+
+input InviteToChannelInput {
+  channelId: Int!
+  userIds: [Int!]!
 }
 
 type Mutation {
   refreshToken: AuthTokens!
   addMessage(messageInput: CreateMessageInput!): Message!
+  createChannel(input: CreateChannelInput!): Channel!
+  joinChannel(input: JoinChannelInput!): Channel!
+  inviteToChannel(input: InviteToChannelInput!): InviteToChannelResult!
 }
 
 input CreateMessageInput {
   message: String!
   userId: Int!
+  channelId: Int!
+}
+
+input CreateChannelInput {
+  name: String!
+}
+
+input JoinChannelInput {
   channelId: Int!
 }
 

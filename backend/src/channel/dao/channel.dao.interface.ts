@@ -1,7 +1,17 @@
-import { Channel as PrismaChannel } from "@prisma/client";
+import { Channel } from "@prisma/client";
+import { CreateChannelInput } from "../graphql-types/input/create-channel.input";
+import { JoinChannelInput } from "../graphql-types/input/join-channel.input";
 
 export interface IChannelDao {
-  findAllChannels(): Promise<PrismaChannel[]>;
-  
-  findChannelById(id: number): Promise<PrismaChannel | null>;
+  findAllChannels(): Promise<Channel[]>;
+
+  findChannelById(id: number): Promise<Channel | null>;
+
+  createChannel(input: CreateChannelInput, userId: number): Promise<Channel>;
+
+  joinChannel(input: JoinChannelInput, userId: number): Promise<Channel>;
+
+  findChannelUserIdsByChannelId(channelId: number): Promise<number[]>;
+
+  inviteUsersToChannel(channelId: number, userIds: number[]): Promise<void>;
 }

@@ -24,6 +24,12 @@ export class AuthDao implements IAuthDao {
     });
   }
 
+  async findUsersByIds(ids: number[]): Promise<User[]> {
+    return this.prisma.user.findMany({
+      where: { id: { in: ids }, deletedAt: null },
+    });
+  }
+
   async createUser(input: CreateUserInput): Promise<User> {
     return this.prisma.user.create({
       data: {
