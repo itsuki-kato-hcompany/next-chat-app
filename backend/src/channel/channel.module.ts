@@ -9,6 +9,7 @@ import { CheckChannelInvitationUseCase } from './usecases/check-channel-invitati
 import { CreateChannelUseCase } from './usecases/create-channel.usecase';
 import { GetChannelUseCase } from './usecases/get-channel.usecase';
 import { GetChannelsUseCase } from './usecases/get-channels.usecase';
+import { GetAvailableChannelsUseCase } from './usecases/get-available-channels.usecase';
 import { GetMyChannelsUseCase } from './usecases/get-my-channels.usecase';
 import { InviteToChannelUseCase } from './usecases/invite-to-channel.usecase';
 import { JoinChannelUseCase } from './usecases/join-channel.usecase';
@@ -29,6 +30,7 @@ import { JoinChannelUseCase } from './usecases/join-channel.usecase';
     JoinChannelUseCase,
     CheckChannelInvitationUseCase,
     GetMyChannelsUseCase,
+    GetAvailableChannelsUseCase,
   ],
 })
 export class ChannelModule {}

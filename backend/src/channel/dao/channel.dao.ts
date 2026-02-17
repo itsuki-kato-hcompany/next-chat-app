@@ -93,7 +93,34 @@ export class ChannelDao implements IChannelDao {
     });
   }
 
-  async findChannelsByUserId(userId: number): Promise<Channel[]> {
+  async findAvailableChannelsByUserId(
+    userId: number,
+    limit: number = 50,
+    offset: number = 0,
+  ): Promise<Channel[]> {
+    return this.prismaService.channel.findMany({
+      where: {
+        deletedAt: null,
+        users: {
+          none: {
+            userId,
+            deletedAt: null,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+      take: limit,
+      skip: offset,
+    });
+  }
+
+  async findChannelsByUserId(
+    userId: number,
+    limit: number = 50,
+    offset: number = 0,
+  ): Promise<Channel[]> {
     return this.prismaService.channel.findMany({
       where: {
         deletedAt: null,
@@ -107,6 +134,8 @@ export class ChannelDao implements IChannelDao {
       orderBy: {
         createdAt: "asc",
       },
+      take: limit,
+      skip: offset,
     });
   }
 }
