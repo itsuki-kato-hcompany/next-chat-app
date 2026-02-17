@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from '@prisma/client';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import { User as UserType } from 'src/user/graphql-types/object/user';
 import { PaginationArgs } from 'src/shared/graphql-types/args/pagination.args';
 import { CreateChannelInput } from './graphql-types/input/create-channel.input';
 import { InviteToChannelInput } from './graphql-types/input/invite-to-channel.input';
@@ -15,6 +16,7 @@ import { CreateChannelUseCase } from './usecases/create-channel.usecase';
 import { GetChannelUseCase } from './usecases/get-channel.usecase';
 import { GetChannelsUseCase } from './usecases/get-channels.usecase';
 import { GetAvailableChannelsUseCase } from './usecases/get-available-channels.usecase';
+import { GetInvitableUsersUseCase } from './usecases/get-invitable-users.usecase';
 import { GetMyChannelsUseCase } from './usecases/get-my-channels.usecase';
 import { InviteToChannelUseCase } from './usecases/invite-to-channel.usecase';
 import { JoinChannelUseCase } from './usecases/join-channel.usecase';
@@ -30,6 +32,7 @@ export class ChannelResolver {
     private readonly checkChannelInvitationUseCase: CheckChannelInvitationUseCase,
     private readonly getMyChannelsUseCase: GetMyChannelsUseCase,
     private readonly getAvailableChannelsUseCase: GetAvailableChannelsUseCase,
+    private readonly getInvitableUsersUseCase: GetInvitableUsersUseCase,
   ) {}
 
   @Mutation(() => Channel)
@@ -80,6 +83,17 @@ export class ChannelResolver {
     @CurrentUser() currentUser: User,
   ): Promise<Channel[]> {
     return this.getAvailableChannelsUseCase.execute(currentUser.id, limit, offset);
+  }
+
+  @Query(() => [UserType], { name: 'invitableUsers' })
+  @UseGuards(GqlAuthGuard)
+  async getInvitableUsers(
+    @Args('channelId', { type: () => Number }) channelId: number,
+    @Args('query', { type: () => String }) query: string,
+    @Args() { limit, offset }: PaginationArgs,
+    @CurrentUser() currentUser: User,
+  ): Promise<UserType[]> {
+    return this.getInvitableUsersUseCase.execute(channelId, currentUser.id, query, limit, offset);
   }
 
   @Query(() => Channel, { name: 'channel', nullable: true })
