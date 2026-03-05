@@ -92,4 +92,50 @@ export class ChannelDao implements IChannelDao {
       })),
     });
   }
+
+  async findAvailableChannelsByUserId(
+    userId: number,
+    limit: number = 50,
+    offset: number = 0,
+  ): Promise<Channel[]> {
+    return this.prismaService.channel.findMany({
+      where: {
+        deletedAt: null,
+        users: {
+          none: {
+            userId,
+            deletedAt: null,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+      take: limit,
+      skip: offset,
+    });
+  }
+
+  async findChannelsByUserId(
+    userId: number,
+    limit: number = 50,
+    offset: number = 0,
+  ): Promise<Channel[]> {
+    return this.prismaService.channel.findMany({
+      where: {
+        deletedAt: null,
+        users: { // channelUserのリレーションから取得
+          some: {
+            userId,
+            deletedAt: null,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+      take: limit,
+      skip: offset,
+    });
+  }
 }
