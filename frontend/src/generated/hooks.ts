@@ -195,6 +195,14 @@ export type SendMessageMutationVariables = Exact<{
 
 export type SendMessageMutation = { __typename?: 'Mutation', addMessage: { __typename?: 'Message', id: number, message: string, userId: number, channelId: number, createdAt: any, updatedAt: any, user?: { __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any } | null, channel?: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } | null } };
 
+export type GetAvailableChannelsQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
+}>;
+
+
+export type GetAvailableChannelsQuery = { __typename?: 'Query', availableChannels: Array<{ __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number }> };
+
 export type GetChannelQueryVariables = Exact<{
   id: Scalars['Float']['input'];
 }>;
@@ -284,6 +292,17 @@ export const SendMessageDocument = gql`
 
 export function useSendMessageMutation() {
   return Urql.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument);
+};
+export const GetAvailableChannelsDocument = gql`
+    query GetAvailableChannels($limit: Float = 50, $offset: Float = 0) {
+  availableChannels(limit: $limit, offset: $offset) {
+    ...ChannelFragment
+  }
+}
+    ${ChannelFragmentFragmentDoc}`;
+
+export function useGetAvailableChannelsQuery(options?: Omit<Urql.UseQueryArgs<GetAvailableChannelsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetAvailableChannelsQuery, GetAvailableChannelsQueryVariables>({ query: GetAvailableChannelsDocument, ...options });
 };
 export const GetChannelDocument = gql`
     query GetChannel($id: Float!) {
