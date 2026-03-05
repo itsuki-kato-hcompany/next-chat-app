@@ -1,7 +1,8 @@
+import { cookies } from "next/headers";
 import { Sidebar } from "@/components/sidebar/sidebar";
 import { getClient } from "@/lib/urqlServer";
-import { GetChannelsDocument } from "../../src/generated/documents";
-import type { GetChannelsQuery, GetChannelsQueryVariables } from "../../src/generated/types";
+import { GetMyChannelsDocument } from "../../src/generated/documents";
+import type { GetMyChannelsQuery, GetMyChannelsQueryVariables } from "../../src/generated/types";
 
 interface ChannelsLayoutProps {
   children: React.ReactNode;
@@ -17,15 +18,18 @@ export default async function ChannelsLayout({
   const { channelId } = await params;
   const selectedChannelId = parseInt(channelId, 10);
 
-  const client = getClient();
+  const cookieStore = await cookies();
+  const token = cookieStore.get('accessToken')?.value;
 
-  // チャンネル一覧を取得
-  const channelsResult = await client.query<GetChannelsQuery, GetChannelsQueryVariables>(
-    GetChannelsDocument,
+  const client = getClient(token);
+
+  // 参加済みチャンネル一覧を取得
+  const channelsResult = await client.query<GetMyChannelsQuery, GetMyChannelsQueryVariables>(
+    GetMyChannelsDocument,
     {}
   ).toPromise();
 
-  const channels = channelsResult?.data?.channels || [];
+  const channels = channelsResult?.data?.myChannels || [];
 
   return (
     <div className="h-screen flex pt-16">
