@@ -29,6 +29,7 @@ export function AvailableChannelsModal({ children }: AvailableChannelsModalProps
     setFetching(true);
     setError(false);
     try {
+      // 未参加チャンネル一覧をroute handler経由で取得
       const res = await fetch("/api/available-channels");
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
