@@ -1,0 +1,7 @@
+#import "../fragments/channel.graphql"
+
+query GetAvailableChannels($limit: Float = 50, $offset: Float = 0) {
+  availableChannels(limit: $limit, offset: $offset) {
+    ...ChannelFragment
+  }
+}
