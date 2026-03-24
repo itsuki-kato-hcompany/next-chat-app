@@ -188,6 +188,13 @@ export type MessageFragmentFragment = { __typename?: 'Message', id: number, mess
 
 export type UserFragmentFragment = { __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any };
 
+export type CreateChannelMutationVariables = Exact<{
+  input: CreateChannelInput;
+}>;
+
+
+export type CreateChannelMutation = { __typename?: 'Mutation', createChannel: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } };
+
 export type InviteToChannelMutationVariables = Exact<{
   input: InviteToChannelInput;
 }>;
@@ -306,6 +313,17 @@ export const MessageFragmentFragmentDoc = gql`
 }
     ${UserFragmentFragmentDoc}
 ${ChannelFragmentFragmentDoc}`;
+export const CreateChannelDocument = gql`
+    mutation CreateChannel($input: CreateChannelInput!) {
+  createChannel(input: $input) {
+    ...ChannelFragment
+  }
+}
+    ${ChannelFragmentFragmentDoc}`;
+
+export function useCreateChannelMutation() {
+  return Urql.useMutation<CreateChannelMutation, CreateChannelMutationVariables>(CreateChannelDocument);
+};
 export const InviteToChannelDocument = gql`
     mutation InviteToChannel($input: InviteToChannelInput!) {
   inviteToChannel(input: $input) {

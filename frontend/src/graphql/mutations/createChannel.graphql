@@ -1,0 +1,7 @@
+#import "../fragments/channel.graphql"
+
+mutation CreateChannel($input: CreateChannelInput!) {
+  createChannel(input: $input) {
+    ...ChannelFragment
+  }
+}
