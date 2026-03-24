@@ -1,0 +1,7 @@
+#import "../fragments/user.graphql"
+
+query GetInvitableUsers($channelId: Float!, $query: String!, $limit: Float = 50, $offset: Float = 0) {
+  invitableUsers(channelId: $channelId, query: $query, limit: $limit, offset: $offset) {
+    ...UserFragment
+  }
+}

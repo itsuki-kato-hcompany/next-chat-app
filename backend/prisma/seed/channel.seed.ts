@@ -57,7 +57,7 @@ export async function seedChannels(prisma: PrismaClient, users: User[]) {
   }
 
   // 開発チームチャンネル
-  const devTeamMembers = [users[1], users[2], users[4]];
+  const devTeamMembers = [users[0], users[1], users[2], users[4]];
   for (let i = 0; i < devTeamMembers.length; i++) {
     await prisma.channelUser.create({
       data: {

@@ -22,7 +22,7 @@ export default function AuthCallbackPage() {
 
       // ブラウザ履歴にアクセストークンを残さないように履歴を削除
       window.history.replaceState(null, '', window.location.pathname);
-      router.push('/channels/1');
+      router.push('/');
     } else {
       router.push('/login');
     }

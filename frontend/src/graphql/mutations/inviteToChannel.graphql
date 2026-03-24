@@ -1,0 +1,17 @@
+#import "../fragments/channel.graphql"
+#import "../fragments/user.graphql"
+
+mutation InviteToChannel($input: InviteToChannelInput!) {
+  inviteToChannel(input: $input) {
+    channel {
+      ...ChannelFragment
+    }
+    invitedUsers {
+      ...UserFragment
+    }
+    alreadyMemberUsers {
+      ...UserFragment
+    }
+    notFoundUserIds
+  }
+}
