@@ -8,6 +8,12 @@ export async function seedUsers(prisma: PrismaClient) {
 
   const users = [
     {
+      name: '加藤逸樹',
+      email: 'i.kato@h-company.co.jp',
+      password: hashedPassword,
+      profileImgPath: null,
+    },
+    {
       name: '山田太郎',
       email: 'taro@example.com',
       password: hashedPassword,

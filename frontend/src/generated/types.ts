@@ -185,6 +185,27 @@ export type MessageFragmentFragment = { __typename?: 'Message', id: number, mess
 
 export type UserFragmentFragment = { __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any };
 
+export type CreateChannelMutationVariables = Exact<{
+  input: CreateChannelInput;
+}>;
+
+
+export type CreateChannelMutation = { __typename?: 'Mutation', createChannel: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } };
+
+export type InviteToChannelMutationVariables = Exact<{
+  input: InviteToChannelInput;
+}>;
+
+
+export type InviteToChannelMutation = { __typename?: 'Mutation', inviteToChannel: { __typename?: 'InviteToChannelResult', notFoundUserIds: Array<number>, channel: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number }, invitedUsers: Array<{ __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any }>, alreadyMemberUsers: Array<{ __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any }> } };
+
+export type JoinChannelMutationVariables = Exact<{
+  input: JoinChannelInput;
+}>;
+
+
+export type JoinChannelMutation = { __typename?: 'Mutation', joinChannel: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } };
+
 export type SendMessageMutationVariables = Exact<{
   messageInput: CreateMessageInput;
 }>;
@@ -218,6 +239,16 @@ export type GetChannelsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetChannelsQuery = { __typename?: 'Query', channels: Array<{ __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number }> };
+
+export type GetInvitableUsersQueryVariables = Exact<{
+  channelId: Scalars['Float']['input'];
+  query: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
+}>;
+
+
+export type GetInvitableUsersQuery = { __typename?: 'Query', invitableUsers: Array<{ __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any }> };
 
 export type GetMessagesQueryVariables = Exact<{
   channelId: Scalars['Float']['input'];

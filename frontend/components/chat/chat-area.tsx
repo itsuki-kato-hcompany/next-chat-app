@@ -1,6 +1,8 @@
 import { MessageList } from "./message-list";
 import { MessageInput } from "./message-input";
-import { Hash } from "lucide-react";
+import { InviteUsersModal } from "./invite-users-modal";
+import { Hash, UserPlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { Message } from "../../src/generated/types";
 
 interface ChatAreaProps {
@@ -18,6 +20,11 @@ export function ChatArea({ selectedChannelId, channelName, messages }: ChatAreaP
         <div className="flex items-center gap-2">
           <Hash className="w-5 h-5 text-gray-600" />
           <h1 className="font-semibold text-lg">{channelName}</h1>
+          <InviteUsersModal channelId={selectedChannelId}>
+            <Button variant="ghost" size="sm" title="ユーザーを招待">
+              <UserPlus className="w-4 h-4" />
+            </Button>
+          </InviteUsersModal>
           <span className="text-sm text-gray-500 ml-auto">
             {messages.length} メッセージ
           </span>

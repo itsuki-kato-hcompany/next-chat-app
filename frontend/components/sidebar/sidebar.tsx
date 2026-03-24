@@ -2,10 +2,11 @@
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Hash, Search } from "lucide-react";
+import { Hash, Search, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Channel } from "../../src/generated/types";
 import { AvailableChannelsModal } from "./available-channels-modal";
+import { CreateChannelModal } from "./create-channel-modal";
 
 interface SidebarProps {
   selectedChannelId: number;
@@ -42,7 +43,16 @@ export function Sidebar({ selectedChannelId, channels }: SidebarProps) {
         </div>
       </ScrollArea>
 
-      <div className="p-2 border-t">
+      <div className="p-2 border-t space-y-1">
+        <CreateChannelModal>
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-left text-muted-foreground hover:text-foreground"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            チャンネルを作成
+          </Button>
+        </CreateChannelModal>
         <AvailableChannelsModal>
           <Button
             variant="ghost"

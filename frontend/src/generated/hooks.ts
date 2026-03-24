@@ -188,6 +188,27 @@ export type MessageFragmentFragment = { __typename?: 'Message', id: number, mess
 
 export type UserFragmentFragment = { __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any };
 
+export type CreateChannelMutationVariables = Exact<{
+  input: CreateChannelInput;
+}>;
+
+
+export type CreateChannelMutation = { __typename?: 'Mutation', createChannel: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } };
+
+export type InviteToChannelMutationVariables = Exact<{
+  input: InviteToChannelInput;
+}>;
+
+
+export type InviteToChannelMutation = { __typename?: 'Mutation', inviteToChannel: { __typename?: 'InviteToChannelResult', notFoundUserIds: Array<number>, channel: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number }, invitedUsers: Array<{ __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any }>, alreadyMemberUsers: Array<{ __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any }> } };
+
+export type JoinChannelMutationVariables = Exact<{
+  input: JoinChannelInput;
+}>;
+
+
+export type JoinChannelMutation = { __typename?: 'Mutation', joinChannel: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } };
+
 export type SendMessageMutationVariables = Exact<{
   messageInput: CreateMessageInput;
 }>;
@@ -221,6 +242,16 @@ export type GetChannelsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetChannelsQuery = { __typename?: 'Query', channels: Array<{ __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number }> };
+
+export type GetInvitableUsersQueryVariables = Exact<{
+  channelId: Scalars['Float']['input'];
+  query: Scalars['String']['input'];
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
+}>;
+
+
+export type GetInvitableUsersQuery = { __typename?: 'Query', invitableUsers: Array<{ __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any }> };
 
 export type GetMessagesQueryVariables = Exact<{
   channelId: Scalars['Float']['input'];
@@ -282,6 +313,49 @@ export const MessageFragmentFragmentDoc = gql`
 }
     ${UserFragmentFragmentDoc}
 ${ChannelFragmentFragmentDoc}`;
+export const CreateChannelDocument = gql`
+    mutation CreateChannel($input: CreateChannelInput!) {
+  createChannel(input: $input) {
+    ...ChannelFragment
+  }
+}
+    ${ChannelFragmentFragmentDoc}`;
+
+export function useCreateChannelMutation() {
+  return Urql.useMutation<CreateChannelMutation, CreateChannelMutationVariables>(CreateChannelDocument);
+};
+export const InviteToChannelDocument = gql`
+    mutation InviteToChannel($input: InviteToChannelInput!) {
+  inviteToChannel(input: $input) {
+    channel {
+      ...ChannelFragment
+    }
+    invitedUsers {
+      ...UserFragment
+    }
+    alreadyMemberUsers {
+      ...UserFragment
+    }
+    notFoundUserIds
+  }
+}
+    ${ChannelFragmentFragmentDoc}
+${UserFragmentFragmentDoc}`;
+
+export function useInviteToChannelMutation() {
+  return Urql.useMutation<InviteToChannelMutation, InviteToChannelMutationVariables>(InviteToChannelDocument);
+};
+export const JoinChannelDocument = gql`
+    mutation JoinChannel($input: JoinChannelInput!) {
+  joinChannel(input: $input) {
+    ...ChannelFragment
+  }
+}
+    ${ChannelFragmentFragmentDoc}`;
+
+export function useJoinChannelMutation() {
+  return Urql.useMutation<JoinChannelMutation, JoinChannelMutationVariables>(JoinChannelDocument);
+};
 export const SendMessageDocument = gql`
     mutation SendMessage($messageInput: CreateMessageInput!) {
   addMessage(messageInput: $messageInput) {
@@ -337,6 +411,22 @@ export const GetChannelsDocument = gql`
 
 export function useGetChannelsQuery(options?: Omit<Urql.UseQueryArgs<GetChannelsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetChannelsQuery, GetChannelsQueryVariables>({ query: GetChannelsDocument, ...options });
+};
+export const GetInvitableUsersDocument = gql`
+    query GetInvitableUsers($channelId: Float!, $query: String!, $limit: Float = 50, $offset: Float = 0) {
+  invitableUsers(
+    channelId: $channelId
+    query: $query
+    limit: $limit
+    offset: $offset
+  ) {
+    ...UserFragment
+  }
+}
+    ${UserFragmentFragmentDoc}`;
+
+export function useGetInvitableUsersQuery(options: Omit<Urql.UseQueryArgs<GetInvitableUsersQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetInvitableUsersQuery, GetInvitableUsersQueryVariables>({ query: GetInvitableUsersDocument, ...options });
 };
 export const GetMessagesDocument = gql`
     query GetMessages($channelId: Float!, $limit: Float = 50, $offset: Float = 0) {
