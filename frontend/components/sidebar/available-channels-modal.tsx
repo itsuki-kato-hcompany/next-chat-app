@@ -24,6 +24,7 @@ export function AvailableChannelsModal({ children }: AvailableChannelsModalProps
   const [channels, setChannels] = useState<AvailableChannel[]>([]);
   const [fetching, setFetching] = useState(false);
   const [error, setError] = useState(false);
+  const [joiningChannelId, setJoiningChannelId] = useState<number | null>(null);
 
   const fetchChannels = useCallback(async () => {
     setFetching(true);
@@ -46,6 +47,25 @@ export function AvailableChannelsModal({ children }: AvailableChannelsModalProps
       fetchChannels();
     }
   }, [open, fetchChannels]);
+
+  const handleJoinChannel = async (channelId: number) => {
+    setJoiningChannelId(channelId);
+    try {
+      const res = await fetch("/api/join-channel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ channelId }),
+      });
+      if (!res.ok) throw new Error("Failed to join channel");
+      setOpen(false);
+      // router経由だとサイドバーの参加中チャンネルが更新されないので強制遷移する（こっちの方がシンプルなので良しとする）
+      window.location.href = `/channels/${channelId}`;
+    } catch (error) {
+      console.error("チャンネル参加エラー:", error);
+    } finally {
+      setJoiningChannelId(null);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -82,8 +102,13 @@ export function AvailableChannelsModal({ children }: AvailableChannelsModalProps
                   <Hash className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm">{channel.name}</span>
                 </div>
-                <Button size="sm" variant="outline">
-                  参加
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleJoinChannel(channel.id)}
+                  disabled={joiningChannelId === channel.id}
+                >
+                  {joiningChannelId === channel.id ? "参加中..." : "参加"}
                 </Button>
               </div>
             ))}

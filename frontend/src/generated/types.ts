@@ -185,6 +185,13 @@ export type MessageFragmentFragment = { __typename?: 'Message', id: number, mess
 
 export type UserFragmentFragment = { __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any };
 
+export type JoinChannelMutationVariables = Exact<{
+  input: JoinChannelInput;
+}>;
+
+
+export type JoinChannelMutation = { __typename?: 'Mutation', joinChannel: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } };
+
 export type SendMessageMutationVariables = Exact<{
   messageInput: CreateMessageInput;
 }>;
