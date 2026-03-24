@@ -63,6 +63,9 @@ type Query {
   getAccessToken(userId: Int!): AuthTokens!
   messages(limit: Float = 50, offset: Float = 0, channelId: Float!): [Message!]!
   channels: [Channel!]!
+  myChannels(limit: Float = 50, offset: Float = 0): [Channel!]!
+  availableChannels(limit: Float = 50, offset: Float = 0): [Channel!]!
+  invitableUsers(channelId: Float!, query: String!, limit: Float = 50, offset: Float = 0): [User!]!
   channel(id: Float!): Channel
   checkChannelInvitation(input: InviteToChannelInput!): CheckChannelInvitationResult!
 }

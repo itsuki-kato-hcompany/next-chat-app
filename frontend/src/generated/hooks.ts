@@ -18,6 +18,11 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
+export type AuthTokens = {
+  __typename?: 'AuthTokens';
+  accessToken: Scalars['String']['output'];
+};
+
 export type Channel = {
   __typename?: 'Channel';
   createdAt: Scalars['DateTime']['output'];
@@ -30,10 +35,38 @@ export type Channel = {
   updaterId: Scalars['Float']['output'];
 };
 
+export type CheckChannelInvitationResult = {
+  __typename?: 'CheckChannelInvitationResult';
+  alreadyMemberUsers: Array<User>;
+  notFoundUserIds: Array<Scalars['Int']['output']>;
+  validUsers: Array<User>;
+};
+
+export type CreateChannelInput = {
+  name: Scalars['String']['input'];
+};
+
 export type CreateMessageInput = {
   channelId: Scalars['Int']['input'];
   message: Scalars['String']['input'];
   userId: Scalars['Int']['input'];
+};
+
+export type InviteToChannelInput = {
+  channelId: Scalars['Int']['input'];
+  userIds: Array<Scalars['Int']['input']>;
+};
+
+export type InviteToChannelResult = {
+  __typename?: 'InviteToChannelResult';
+  alreadyMemberUsers: Array<User>;
+  channel: Channel;
+  invitedUsers: Array<User>;
+  notFoundUserIds: Array<Scalars['Int']['output']>;
+};
+
+export type JoinChannelInput = {
+  channelId: Scalars['Int']['input'];
 };
 
 export type Message = {
@@ -51,6 +84,10 @@ export type Message = {
 export type Mutation = {
   __typename?: 'Mutation';
   addMessage: Message;
+  createChannel: Channel;
+  inviteToChannel: InviteToChannelResult;
+  joinChannel: Channel;
+  refreshToken: AuthTokens;
 };
 
 
@@ -58,11 +95,39 @@ export type MutationAddMessageArgs = {
   messageInput: CreateMessageInput;
 };
 
+
+export type MutationCreateChannelArgs = {
+  input: CreateChannelInput;
+};
+
+
+export type MutationInviteToChannelArgs = {
+  input: InviteToChannelInput;
+};
+
+
+export type MutationJoinChannelArgs = {
+  input: JoinChannelInput;
+};
+
 export type Query = {
   __typename?: 'Query';
+  availableChannels: Array<Channel>;
   channel?: Maybe<Channel>;
   channels: Array<Channel>;
+  checkChannelInvitation: CheckChannelInvitationResult;
+  /** 開発環境専用: テスト用アクセストークン取得 */
+  getAccessToken: AuthTokens;
+  invitableUsers: Array<User>;
+  me?: Maybe<User>;
   messages: Array<Message>;
+  myChannels: Array<Channel>;
+};
+
+
+export type QueryAvailableChannelsArgs = {
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
 };
 
 
@@ -71,8 +136,32 @@ export type QueryChannelArgs = {
 };
 
 
+export type QueryCheckChannelInvitationArgs = {
+  input: InviteToChannelInput;
+};
+
+
+export type QueryGetAccessTokenArgs = {
+  userId: Scalars['Int']['input'];
+};
+
+
+export type QueryInvitableUsersArgs = {
+  channelId: Scalars['Float']['input'];
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
+  query: Scalars['String']['input'];
+};
+
+
 export type QueryMessagesArgs = {
   channelId: Scalars['Float']['input'];
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
+};
+
+
+export type QueryMyChannelsArgs = {
   limit?: InputMaybe<Scalars['Float']['input']>;
   offset?: InputMaybe<Scalars['Float']['input']>;
 };
@@ -106,6 +195,14 @@ export type SendMessageMutationVariables = Exact<{
 
 export type SendMessageMutation = { __typename?: 'Mutation', addMessage: { __typename?: 'Message', id: number, message: string, userId: number, channelId: number, createdAt: any, updatedAt: any, user?: { __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any } | null, channel?: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } | null } };
 
+export type GetAvailableChannelsQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
+}>;
+
+
+export type GetAvailableChannelsQuery = { __typename?: 'Query', availableChannels: Array<{ __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number }> };
+
 export type GetChannelQueryVariables = Exact<{
   id: Scalars['Float']['input'];
 }>;
@@ -133,6 +230,14 @@ export type GetMessagesQueryVariables = Exact<{
 
 
 export type GetMessagesQuery = { __typename?: 'Query', messages: Array<{ __typename?: 'Message', id: number, message: string, userId: number, channelId: number, createdAt: any, updatedAt: any, user?: { __typename?: 'User', id: number, name: string, email: string, profileImgPath?: string | null, createdAt: any, updatedAt: any } | null, channel?: { __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number } | null }> };
+
+export type GetMyChannelsQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Float']['input']>;
+  offset?: InputMaybe<Scalars['Float']['input']>;
+}>;
+
+
+export type GetMyChannelsQuery = { __typename?: 'Query', myChannels: Array<{ __typename?: 'Channel', id: number, name: string, isArchive: boolean, createdAt: any, updatedAt: any, creatorId: number, updaterId: number }> };
 
 export type MessageAddedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -188,6 +293,17 @@ export const SendMessageDocument = gql`
 export function useSendMessageMutation() {
   return Urql.useMutation<SendMessageMutation, SendMessageMutationVariables>(SendMessageDocument);
 };
+export const GetAvailableChannelsDocument = gql`
+    query GetAvailableChannels($limit: Float = 50, $offset: Float = 0) {
+  availableChannels(limit: $limit, offset: $offset) {
+    ...ChannelFragment
+  }
+}
+    ${ChannelFragmentFragmentDoc}`;
+
+export function useGetAvailableChannelsQuery(options?: Omit<Urql.UseQueryArgs<GetAvailableChannelsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetAvailableChannelsQuery, GetAvailableChannelsQueryVariables>({ query: GetAvailableChannelsDocument, ...options });
+};
 export const GetChannelDocument = gql`
     query GetChannel($id: Float!) {
   channel(id: $id) {
@@ -232,6 +348,17 @@ export const GetMessagesDocument = gql`
 
 export function useGetMessagesQuery(options: Omit<Urql.UseQueryArgs<GetMessagesQueryVariables>, 'query'>) {
   return Urql.useQuery<GetMessagesQuery, GetMessagesQueryVariables>({ query: GetMessagesDocument, ...options });
+};
+export const GetMyChannelsDocument = gql`
+    query GetMyChannels($limit: Float = 50, $offset: Float = 0) {
+  myChannels(limit: $limit, offset: $offset) {
+    ...ChannelFragment
+  }
+}
+    ${ChannelFragmentFragmentDoc}`;
+
+export function useGetMyChannelsQuery(options?: Omit<Urql.UseQueryArgs<GetMyChannelsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetMyChannelsQuery, GetMyChannelsQueryVariables>({ query: GetMyChannelsDocument, ...options });
 };
 export const MessageAddedDocument = gql`
     subscription MessageAdded {

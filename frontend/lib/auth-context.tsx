@@ -8,6 +8,7 @@ import {
   useCallback,
   ReactNode,
 } from 'react';
+import { setTokenCookie, getTokenCookie, removeTokenCookie } from './cookie-utils';
 
 /**
  * ユーザー情報の型定義
@@ -39,7 +40,6 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-const TOKEN_KEY = 'accessToken';
 
 /**
  * 認証状態を管理し、子コンポーネントに提供するプロバイダー
@@ -53,15 +53,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   /**
-   * アクセストークンを設定し、localStorageにも保存する
-   * tokenがnullの場合はlocalStorageから削除
+   * アクセストークンを設定し、Cookieにも保存する
+   * tokenがnullの場合はCookieから削除
    */
   const setAccessToken = useCallback((token: string | null) => {
     setAccessTokenState(token);
     if (token) {
-      localStorage.setItem(TOKEN_KEY, token);
+      setTokenCookie(token);
     } else {
-      localStorage.removeItem(TOKEN_KEY);
+      removeTokenCookie();
     }
   }, []);
 
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    * アクセストークンを取得
    */
   const getAccessToken = useCallback(() => {
-    return accessToken || localStorage.getItem(TOKEN_KEY);
+    return accessToken || getTokenCookie();
   }, [accessToken]);
 
   /**
@@ -156,11 +156,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const initAuth = async () => {
       setIsLoading(true);
 
-      // localStorageからトークンを取得
-      const storedToken = localStorage.getItem(TOKEN_KEY);
+      // Cookieからトークンを取得
+      const storedToken = getTokenCookie();
 
       if (storedToken) {
-        // localStorageにトークンがある場合
+        // Cookieにトークンがある場合
         setAccessTokenState(storedToken);
         const success = await fetchCurrentUser(storedToken);
 
@@ -176,8 +176,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
       } else {
-        // localStorageにトークンがない場合
-        // Cookieにリフレッシュトークンがあれば復元を試行
+        // Cookieにトークンがない場合
+        // リフレッシュトークンがあれば復元を試行
         const newToken = await refreshAccessToken();
         if (newToken) {
           await fetchCurrentUser(newToken);

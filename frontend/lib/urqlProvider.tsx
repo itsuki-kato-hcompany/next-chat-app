@@ -5,17 +5,14 @@ import { authExchange, AuthUtilities } from '@urql/exchange-auth';
 import { CombinedError, Operation } from '@urql/core';
 import { createClient as createWSClient } from 'graphql-ws';
 import { useMemo } from 'react';
+import { getTokenCookie, setTokenCookie, removeTokenCookie } from './cookie-utils';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000';
-const TOKEN_KEY = 'accessToken';
 
 // トークンを取得する関数
 const getToken = () => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem(TOKEN_KEY);
-  }
-  return null;
+  return getTokenCookie();
 };
 
 // UrqlProviderをラップするコンポーネント
@@ -76,13 +73,13 @@ export function UrqlProvider({ children }: { children: React.ReactNode }) {
                 const newToken = data.data?.refreshToken?.accessToken;
 
                 if (newToken) {
-                  localStorage.setItem(TOKEN_KEY, newToken);
+                  setTokenCookie(newToken);
                 } else {
-                  localStorage.removeItem(TOKEN_KEY);
+                  removeTokenCookie();
                   window.location.href = '/login';
                 }
               } catch {
-                localStorage.removeItem(TOKEN_KEY);
+                removeTokenCookie();
                 window.location.href = '/login';
               }
             },
